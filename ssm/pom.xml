@@ -201,6 +201,7 @@
   </dependencies>
 
   <build>
+
     <finalName>ssm</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
@@ -212,6 +213,9 @@
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
