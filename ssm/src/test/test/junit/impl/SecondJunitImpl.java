@@ -4,14 +4,16 @@ import com.zsf.domain.User;
 import com.zsf.service.IUserService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.redis.core.RedisTemplate;
 import test.junit.BaseJunitTest;
 
 public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
 
     @Autowired
     private IUserService iUserService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Test
     public void test() {
@@ -21,12 +23,16 @@ public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
     }
 
     @Test
-    @Rollback(false)
     public void insert() {
         User user = new User();
         user.setName("qd");
         user.setPass("qsp");
         iUserService.insert(user);
         int a = 1/0;
+    }
+
+    @Test
+    public void redisTest() {
+        System.out.println(redisTemplate.opsForValue().get("sb"));;
     }
 }
