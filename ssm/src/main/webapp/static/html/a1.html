@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+	<meta charset="utf-8">
+</head>
+<body>
+<!--<svg baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
+     viewBox="0 0 18 22.001">
+    <rect x="50" y="20" width="150" height="150"
+          style="fill:blue;stroke:pink;stroke-width:5;fill-opacity:0.1;
+  stroke-opacity:0.9"/>
+</svg>-->
+<div class="svgContainer" style="left: 20%; width: 70%; background-color: lightgray; height: 50%"></div><!--
+<script src="../js/svg.draggy.js"></script>-->
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-drag.v1.min.js"></script>
+<script>/*
+    window.addEventListener("load", function () {
+        var svg = new SVG(document.querySelector(".graph")).size("100%", 500);
+
+        // Plain draggy
+        svg.rect(70, 100)
+            .center(70, 90)
+            .fill("#388E3C")
+            .draggy()
+        ;
+
+        // Grouped draggy
+        var group = svg.group().draggy();
+        group.rect(100, 100).center(180, 90).fill("#4CAF50");
+        group.rect(100, 100).center(180, 200).fill("#C8E6C9");
+
+        // Constraind with object
+        var elm = svg.rect(100,100).fill("#8BC34A").center(290, 90).draggy({
+            minX: 200
+            , minY: 50
+            , maxX: 600
+            , maxY: 200
+        });
+
+        var s = null
+            , t = null
+        ;
+
+        elm.on("dragstart", function() {
+            s = elm.clone().opacity(0.2);
+        });
+
+        elm.on("dragmove", function() {
+            s.animate(200, '>').move(elm.x(), elm.y());
+        });
+
+        elm.on("dragend", function() {
+            s.remove();
+        });
+
+        // Constraind with function
+        svg.rect(100,100).fill("#009688").center(70, 220).draggy(function(x, y) {
+            return {
+                x: x < 400
+                , y: y < 300
+            };
+        });
+    });*/
+	window.onload = function () {
+        var svg = d3.select(".svgContainer")
+			.append("svg")
+			.attr("width", "100%")
+			.attr("height", 500);
+        var rect = svg.append("rect");
+        rect.attr("width", 100)
+			.attr("height", 50)
+			.attr("fill", "red")
+            .attr("x", 100)
+            .attr("y", 100);
+    svg.on("click", function() {
+            if (d3.event.defaultPrevented) return; // click suppressed
+            console.log("clicked!");
+        });
+        var drag = d3.drag(svg);
+        //svg.call(drag);
+		/*
+        drag.origin(function (d) {
+			return d;
+        });*/
+        drag.on("start", function() {
+            d3.event.sourceEvent.stopPropagation(); // silence other listeners
+        });
+        drag.on("drag", function(d) {
+            rect
+                .attr("x", d.x = d3.event.x )
+                .attr("y", d.y = d3.event.y );
+        });
+    }
+</script>
+</body>
+</html>
