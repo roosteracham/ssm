@@ -67,12 +67,26 @@ $("#deletesvg").on("click", function () {
     $("#svgContainer svg").remove();
 });
 
+// 选中删除元素
+$("#deleteEle").on("click", function () {
+    var del = SVG.select('.selected');
+    for (var i = 0;i < del.length(); i++) {
+        var o = del.get(i);
+        if (isSvgElement(o.node.nodeName)) {
+            o.selectize(false)
+                .resize('stop');
+            o.node.remove();
+        }
+    }
+});
+
 //点击元素选中，其他元素清除选中效果
 function selectClicked(o) {
     clearAllSelected();
     // 选中点击的元素
     o.selectize()
         .resize();
+    o.addClass('selected');
 }
 
 //清除所有元素选中效果
@@ -85,13 +99,15 @@ function clearAllSelected() {
         var child = c[i];
         if (isSvgElement(child.node.nodeName)) { // child 是SVG实例，child.node 是dom实例
             child.selectize(false)               // 使用child.node.instance 返回SVG实例
-                .resize('stop')
+                .resize('stop');
+            child.removeClass('selected');
         } else if (child.children.length !== 0) {
             var c = child.children;
             for (var j = 0; j < c.length; j++) {
                 if (isSvgElement(c[j].nodeName)) {
                     c[j].selectize(false)
-                        .resize('stop')
+                        .resize('stop');
+                    child.removeClass('selected');
                 }
             }
         }
@@ -132,6 +148,7 @@ function myResize(o) {
         .selectize()
         .resize();   // 可缩放
 
+    o.addClass('selected');
     // 为元素添加点击事件
     selectClickedEle(o);
 }
