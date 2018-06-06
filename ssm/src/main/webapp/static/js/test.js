@@ -80,6 +80,30 @@ $("#deleteEle").on("click", function () {
     }
 });
 
+//旋转元素
+function rotate(arc) {
+    var del = SVG.select('.selected');
+    for (var i = 0;i < del.length(); i++) {
+        var o = del.get(i);
+        if (isSvgElement(o.node.nodeName)) {
+            o.transform({
+                rotation : arc, // 旋转角度
+                relative : true // 相对当前位置旋转
+            });
+        }
+    }
+}
+
+// 左旋90度
+$("#rotateLeft").on("click", function () {
+    rotate(-90);
+});
+
+// 右旋90度
+$("#rotateRight").on("click", function () {
+    rotate(90);
+});
+
 //点击元素选中，其他元素清除选中效果
 function selectClicked(o) {
     clearAllSelected();
