@@ -33,6 +33,7 @@ var allSvgs = [
     "TEXT"
 ];
 
+// 是否是图形元素
 function isSvgElement(name) {
     for (var i = 0; i < allSvgs.length; i++) {
         if (allSvgs[i].toLowerCase() === name) {
@@ -45,7 +46,9 @@ function isSvgElement(name) {
 // 新建工程
 $("#newSvg").on("click", function () {
     if (svg === null) {
+        // 新建svg元素
         svg = SVG("svgContainer").size("100%", "100%");
+        // 为svg添加点击事件， 点击非图形元素时取消选中效果
         svg.node.addEventListener("click", clickNonEleToClear);
     }
 });
@@ -80,8 +83,8 @@ function clearAllSelected() {
     for (var i = 0; i < c.length; i++) {
         //console.log("sad" + children[0])
         var child = c[i];
-        if (isSvgElement(child.node.nodeName)) {
-            child.selectize(false)
+        if (isSvgElement(child.node.nodeName)) { // child 是SVG实例，child.node 是dom实例
+            child.selectize(false)               // 使用child.node.instance 返回SVG实例
                 .resize('stop')
         } else if (child.children.length !== 0) {
             var c = child.children;
@@ -95,7 +98,7 @@ function clearAllSelected() {
     }
 }
 
-// 点击非图片区域曲线选中
+// 点击非图片区域取消选中
 function clickNonEleToClear(e) {
     if (e.target.nodeName === "svg") {
         clearAllSelected();
@@ -104,22 +107,41 @@ function clickNonEleToClear(e) {
 
 // 图形点击可以调整大小
 function myResize(o) {
-    // 限制移动范围
 
+    //定义图形原始位置
+    o.move(100, 100) // 图形原始位置
+
+    // 清除所有选中效果
+    clearAllSelected();
+
+    // 限制移动范围
+    // 首先获取svg的范围
+    var b = svg.viewbox();
+    var width = b.width,
+        height = b.height;
+    // 移动区域
     var opt = {
-        constraint: {
             minX: 0,
             minY: 0,
-            maxX: 200,
-            maxY: 300
-        }
+            maxX: width,
+            maxY: height
     };
-    o.move(100, 100) // 图形原始位置
-        .draggable() // 可拖放
-        .selectize() // 可缩放
-        .resize();
+
+    // 可拖放，可缩放
+    o.draggable(opt) // 可拖放
+        .selectize()
+        .resize();   // 可缩放
+
+    // 为元素添加点击事件
+    selectClickedEle(o);
 }
 
+// 点击选中
+function selectClickedEle(o) {
+    o.click(function () {
+        selectClicked(o);
+    });
+}
 // 新增直线
 $("#line").on("click", function () {
     if(svg === null) {
@@ -156,10 +178,6 @@ $("#rect").on("click", function () {
     var rect = svg.rect(100, 200)
        .attr("fill", "red");
     myResize(rect);
-    rect.node.removeEventListener("click", clearAllSelected);
-    rect.click(function () {
-        selectClicked(rect);
-    });
 });
 
 //新增圆形
@@ -170,10 +188,6 @@ $("#circle").on("click", function () {
     var circle = svg.circle(100, 200)
         .attr("fill", "red");
     myResize(circle);
-    circle.node.removeEventListener("click", clearAllSelected);
-    circle.click(function () {
-        selectClicked(circle);
-        });
 });
 
 // 新增椭圆
