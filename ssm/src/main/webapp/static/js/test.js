@@ -18,6 +18,71 @@ $(function(){
     });
 });
 
+/*
+
+var wId = "w";
+var index = 0;
+var startX = 0, startY = 0;
+var flag = false;
+var rectLeft = "0px", rectTop = "0px", rectHeight = "0px", rectWidth = "0px";
+
+document.onmousedown = function(e){
+    flag = true;
+    try{
+        var evt = window.event || e;
+        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+        startX = evt.clientX + scrollLeft;
+        startY = evt.clientY + scrollTop;
+        index++;
+        var div = document.createElement("div");
+        div.id = wId + index;
+        div.className = "div";
+        div.style.marginLeft = startX + "px";
+        div.style.marginTop = startY + "px";
+        document.body.appendChild(div);
+    }catch(e){
+        //alert(e);
+    }
+};
+
+document.onmouseup = function(){
+    try{
+        document.body.removeChild($(wId + index));
+        var div = document.createElement("div");
+        div.className = "rect";
+        div.style.marginLeft = rectLeft;
+        div.style.marginTop = rectTop;
+        div.style.width = rectWidth;
+        div.style.height = rectHeight;
+        document.body.appendChild(div);
+    }catch(e){
+        //alert(e);
+    }
+    flag = false;
+};
+
+document.onmousemove = function(e){
+    if(flag){
+        try{
+            var evt = window.event || e;
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+            rectLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
+            rectTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
+            rectHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
+            rectWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
+            $(wId + index).style.marginLeft = rectLeft;
+            $(wId + index).style.marginTop = rectTop;
+            $(wId + index).style.width = rectWidth;
+            $(wId + index).style.height = rectHeight;
+        }catch(e){
+            //alert(e);
+        }
+    }
+};
+*/
+
 // 当前svg根元素
 var svg = null;
 
@@ -49,7 +114,8 @@ $("#newSvg").on("click", function () {
         // 新建svg元素
         svg = SVG("svgContainer").size("100%", "100%");
         // 为svg添加点击事件， 点击非图形元素时取消选中效果
-        svg.node.addEventListener("click", clickNonEleToClear);
+        svg.click(clickNonEleToClear);
+        //svg.
     }
 });
 
@@ -78,6 +144,11 @@ $("#deleteEle").on("click", function () {
             o.node.remove();
         }
     }
+});
+
+//组合元素
+$('#groupEle').on('click', function () {
+
 });
 
 //旋转元素
@@ -117,12 +188,14 @@ function selectClicked(o) {
 //清除所有元素选中效果
 function clearAllSelected() {
     // 获取svg孩子元素，孩子节点.node才是
-    var c = svg.children();
+    //var c = svg.children();
+    // 使用SVG选择器选择所有图形， svg的子节点中的图形具有ele class
+    var c = SVG.select('.ele')
 
     //判断孩子节点是否是图形元素，如果是去除选中
-    for (var i = 0; i < c.length; i++) {
+    for (var i = 0; i < c.length(); i++) {
         //console.log("sad" + children[0])
-        var child = c[i];
+        /*var child = c[i];
         if (isSvgElement(child.node.nodeName)) { // child 是SVG实例，child.node 是dom实例
             child.selectize(false)               // 使用child.node.instance 返回SVG实例
                 .resize('stop');
@@ -136,7 +209,11 @@ function clearAllSelected() {
                     child.removeClass('selected');
                 }
             }
-        }
+        }*/
+        var o = c.get(i);
+        o.selectize(false)
+            .resize('stop');
+        o.removeClass('selected')
     }
 }
 
@@ -182,7 +259,8 @@ function myResize(o) {
         .resize();   // 可缩放
 
     // 被点击的图形添加selected属性，标记被选中
-    o.addClass('selected');
+    o.addClass('selected')
+        .addClass('ele');
 
     // 为元素添加点击事件
     selectClickedEle(o);
@@ -352,14 +430,25 @@ $('#light').on('click', function () {
     if(svg === null) {
         return;
     }
-    var light = svg.path('M79.4,67.8c0-18.4-16.9-33.2-37.7-33.2S4,49.4,4,67.8' +
-        'c0,7.3,2.7,14,7.1,19.4c0.5,0.7,15.5,21.9,16.7,30.8c1.3,9.1,' +
-        '1.3,11.5,1.3,11.5h25.2c0,0,0-2.4,1.3-11.5c1.3-8.9,16.2-30,16.7-30.8'+
-        'C76.8,81.8,79.4,75.1,79.4,67.')
+    var light = svg.path().M({x : 79.4, y : 67.8})
+        .c({x : 0, y : -18.4}, {x : -16.9, y : -33.2}, {x : -37.7, y : -33.2})
+        .S({x : 4, y : 49.4}, {x : 4, y : 67.8})
+        .c({x : 0, y : 7.3}, {x : 2.7, y : 14}, {x : 7.1, y : 19.4})
+        .c({x : 0.5, y : 0.7}, {x : 15.5, y : 21.9}, {x : 16.7, y : 30.8})
+        //.c({x : 1.3, y : 9.1}, {x : 1.3, y : 11.5}, {x : 1.3, y : 11.5})
+        .h(25.2)
+        .v(6)
+        .h(-25.2)
+        .v(6)
+        .h(25.2)
+        .v(-12)
+        //.c({x : 0, y : 0}, {x : 0, y : -2.4}, {x : 1.3, y : -11.5})
+        .c({x : 1.3, y : -8.9}, {x : 16.2, y : -30}, {x : 16.7, y : -30.8})
+        .C({x : 76.8, y : 81.8}, {x : 79.4, y : 75.1}, {x : 79.4, y : 67})
         .fill('green')
         .stroke({
             color: 'white',
-            width: 4,
+            width: 2,
             linecap: 'round',
             linejoin: 'round'
         });
