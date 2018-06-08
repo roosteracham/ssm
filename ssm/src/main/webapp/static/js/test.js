@@ -115,9 +115,140 @@ $("#newSvg").on("click", function () {
         svg = SVG("svgContainer").size("100%", "100%");
         // 为svg添加点击事件， 点击非图形元素时取消选中效果
         svg.click(clickNonEleToClear);
-        //svg.
+        //svg 添加鼠标按下事件
+        svg.mousedown(mousedownOnNonEle);
+        svg.mouseup(mouseupOnSVG);
+        svg.mousemove(mouseoverOnSVG);
     }
 });
+
+// 是否是点击事件
+var isClick = true;
+
+// 鼠标按下时间
+var downTime,
+    upTime;  // 鼠标弹起时间
+
+// 为true时，鼠标移动事件有效
+var isMouseover = false;
+
+// 定义鼠标按下和弹起时的坐标
+var beginX, beginY,
+    widthM = 0, heightM = 0;
+
+// 保存矩形
+var rectOnMousemove = null;
+
+// 鼠标按下事件
+function mousedownOnNonEle(e) {
+    if (e.target.nodeName === 'svg') {
+
+        downTime = new Date().getTime();
+        //清除所有选中状态
+        clearAllSelected();
+
+        // 如果class 为 rectMousemove 的元素仍存在则删除
+        deleteRectMousemove();
+
+        // 获取鼠标点击时相对于svg背景的坐标
+        beginX = e.layerX;
+        beginY = e.layerY;
+        //console.log(beginX, beginY)
+
+        // 鼠标移动时响应，画矩形
+        isMouseover = true;
+
+        // 画矩形， 此矩形被 rectMousemove class标识 ， 在鼠标弹起时依据此class 删除
+        // 在鼠标移动时，依据此class 选择，并根据鼠标偏移量设置此矩形的宽度和高度
+        rectOnMousemove = svg.rect(0, 0, 0, 0)
+           .fill('none')
+           .stroke({
+                width : 1
+           })
+           .addClass('rectMousemove')
+           .move(beginX, beginY)
+    }
+}
+
+// 删除虽鼠标变化的矩形
+function deleteRectMousemove() {
+    var rects = SVG.select('.rectMousemove');
+    for (var i = 0; i < rects.length(); i++) {
+        var rect = rects.get(i);
+        rect.remove()
+    }
+}
+
+// 鼠标谈起处理事件
+function mouseupOnSVG(e) {
+
+    if (isMouseover) {
+        // 判断矩形中包含的图形，在其中则被选中
+        var eles = SVG.select('.ele');
+        var i = 0;
+        for (; i < eles.length(); i++) {
+            var ele = eles.get(i);
+            var cx = ele.cx(),
+                cy = ele.cy();
+
+            // 如果元素中心在class为的矩形内， 则该元素被选中
+            if (rectOnMousemove.inside(cx, cy)) {
+                limiteDragArea(ele).selectize()
+                    .addClass('selected')
+                    .resize();
+            }
+        }
+
+        // 获取鼠标点击时相对于svg背景的坐标
+        //endX = e.layerX;
+        //endY = e.layerY;
+        //console.log('mouse up', endX, endY)
+
+        // 鼠标移动时，不做任何处理
+        isMouseover = false;
+
+        //将宽度和高度重置为0
+        widthM = 0;
+        heightM = 0;
+        // 删除虽鼠标变化的矩形
+        deleteRectMousemove();
+
+        // 保存矩形的变量置null
+        rectOnMousemove = null;
+
+        // 计算鼠标点击经过的时间，时间大于200ms，阻止click事件
+        upTime = new Date().getTime();
+        if ((upTime - downTime) > 200) {
+            isClick = false;
+        } else {
+            isClick = true;
+        }
+
+    }
+}
+
+// 鼠标移动到svg上的处理事件
+function mouseoverOnSVG(e) {
+    if (isMouseover) {
+
+        // 获取鼠标偏移量
+        var dx = e.movementX,
+            dy = e.movementY;
+
+        // 设置矩形宽度和高度
+        widthM += dx;
+        heightM += dy;
+        var rect = SVG.select('.rectMousemove');
+
+        // svg中只应该有一个class 为 rectMouseMove 的矩形
+        if(rect.length() === 1) {
+
+            rect.get(0).size(widthM, heightM);
+        }
+        //console.log('over', e.clientX, e.clientY, e.movementX,
+         //   e.movementY, e.target.scrollX, e.target.scrollY)
+    }
+}
 
 // 清除工程元素
 $("#clearElements").on("click", function () {
@@ -219,7 +350,7 @@ function clearAllSelected() {
 
 // 点击非图片区域取消选中
 function clickNonEleToClear(e) {
-    if (e.target.nodeName === "svg") {
+    if (isClick && e.target.nodeName === "svg") {
         clearAllSelected();
     }
 }

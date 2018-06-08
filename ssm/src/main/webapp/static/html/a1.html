@@ -1,98 +1,79 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh" lang="zh">
 <head>
-	<title>test</title>
-	<meta charset="utf-8">
+	<title>鼠标拖动画矩形</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<style type="text/css">
+		body,h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,form,fieldset,legend,button,input,textarea,th,td{margin:0;padding:0}
+		html{color:#000;overflow:-moz-scrollbars-vertical}
+		.div{position:absolute; border:1px dashed blue; width:0px; height:0px;left:0px; top:0px; overflow:hidden;}
+		.retc{position:absolute; border:1px solid #CCCCCC; overflow:hidden;}
+	</style>
 </head>
 <body>
-<!--<svg baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
-     viewBox="0 0 18 22.001">
-    <rect x="50" y="20" width="150" height="150"
-          style="fill:blue;stroke:pink;stroke-width:5;fill-opacity:0.1;
-  stroke-opacity:0.9"/>
-</svg>-->
-<div class="svgContainer" style="left: 20%; width: 70%; background-color: lightgray; height: 50%"></div><!--
-<script src="../js/svg.draggy.js"></script>-->
-<script src="https://d3js.org/d3.v5.js"></script>
-<script src="https://d3js.org/d3-drag.v1.min.js"></script>
-<script>/*
-    window.addEventListener("load", function () {
-        var svg = new SVG(document.querySelector(".graph")).size("100%", 500);
-
-        // Plain draggy
-        svg.rect(70, 100)
-            .center(70, 90)
-            .fill("#388E3C")
-            .draggy()
-        ;
-
-        // Grouped draggy
-        var group = svg.group().draggy();
-        group.rect(100, 100).center(180, 90).fill("#4CAF50");
-        group.rect(100, 100).center(180, 200).fill("#C8E6C9");
-
-        // Constraind with object
-        var elm = svg.rect(100,100).fill("#8BC34A").center(290, 90).draggy({
-            minX: 200
-            , minY: 50
-            , maxX: 600
-            , maxY: 200
-        });
-
-        var s = null
-            , t = null
-        ;
-
-        elm.on("dragstart", function() {
-            s = elm.clone().opacity(0.2);
-        });
-
-        elm.on("dragmove", function() {
-            s.animate(200, '>').move(elm.x(), elm.y());
-        });
-
-        elm.on("dragend", function() {
-            s.remove();
-        });
-
-        // Constraind with function
-        svg.rect(100,100).fill("#009688").center(70, 220).draggy(function(x, y) {
-            return {
-                x: x < 400
-                , y: y < 300
-            };
-        });
-    });*/
-	window.onload = function () {
-        var svg = d3.select(".svgContainer")
-			.append("svg")
-			.attr("width", "100%")
-			.attr("height", 500);
-        var rect = svg.append("rect");
-        rect.attr("width", 100)
-			.attr("height", 50)
-			.attr("fill", "red")
-            .attr("x", 100)
-            .attr("y", 100);
-    svg.on("click", function() {
-            if (d3.event.defaultPrevented) return; // click suppressed
-            console.log("clicked!");
-        });
-        var drag = d3.drag(svg);
-        //svg.call(drag);
-		/*
-        drag.origin(function (d) {
-			return d;
-        });*/
-        drag.on("start", function() {
-            d3.event.sourceEvent.stopPropagation(); // silence other listeners
-        });
-        drag.on("drag", function(d) {
-            rect
-                .attr("x", d.x = d3.event.x )
-                .attr("y", d.y = d3.event.y );
-        });
+</body>
+<script language = "javascript">
+    var wId = "w";
+    var index = 0;
+    var startX = 0, startY = 0;
+    var flag = false;
+    var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
+    document.onmousedown = function(e){
+        flag = true;
+        try{
+            var evt = window.event || e;
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+            startX = evt.clientX + scrollLeft;
+            startY = evt.clientY + scrollTop;
+            index++;
+            var div = document.createElement("div");
+            div.id = wId + index;
+            div.className = "div";
+            div.style.marginLeft = startX + "px";
+            div.style.marginTop = startY + "px";
+            document.body.appendChild(div);
+        }catch(e){
+            //alert(e);
+        }
+    }
+    document.onmouseup = function(){
+        try{
+            document.body.removeChild($(wId + index));
+            var div = document.createElement("div");
+            div.className = "retc";
+            div.style.marginLeft = retcLeft;
+            div.style.marginTop = retcTop;
+            div.style.width = retcWidth;
+            div.style.height = retcHeight;
+            document.body.appendChild(div);
+        }catch(e){
+            //alert(e);
+        }
+        flag = false;
+    }
+    document.onmousemove = function(e){
+        if(flag){
+            try{
+                var evt = window.event || e;
+                var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                retcLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
+                retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
+                retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
+                retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
+                $(wId + index).style.marginLeft = retcLeft;
+                $(wId + index).style.marginTop = retcTop;
+                $(wId + index).style.width = retcWidth;
+                $(wId + index).style.height = retcHeight;
+            }catch(e){
+                //alert(e);
+            }
+        }
+    }
+    var $ = function(id){
+        return document.getElementById(id);
     }
 </script>
-</body>
 </html>

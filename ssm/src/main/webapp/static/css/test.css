@@ -34,3 +34,7 @@ a{text-decoration:none;}
 .container {
     display: inline-block;
 }
+
+.rectMousemove {
+    stroke-dasharray: 2, 2;
+}
