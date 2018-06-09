@@ -24,19 +24,32 @@
 <script>
     var draw = SVG('svgContainer').size(500, 330)
 
-	var rect2 = draw.rect(50,50).move(250,50).fill('red')
+	var rect2 = draw.rect(50,50).move(250,50).fill('red').draggable()
     var group = draw.group()
     var rect = group.rect(50,50).move(100,100).fill('red')
     var rect1 = group.rect(50, 50).fill('red')
-	group.draggable()
-	group.selectize()
+	group.draggable()/*.on('dragmove', function (e) {
+		e.preventDefault()
+		this.move(this.x() + e.movemenX, this.y() + e.movemenY)
+    })*/
+	/*group.selectize()
 		.resize()
-		.fill('none')
+		.fill('none')*/
     $('#b').on('click', function () {
         group.add(rect2)
+        var r = group.node.getAttribute('transform')
+        var s = r.split(',');
+        var dx = s[s.length - 2];
+        var dy = s[s.length - 1].split(')')[0];
+		rect2.move(rect2.x() - parseInt(dx),rect2.y() - parseInt(dy))
     })
     $('#b1').on('click', function () {
         rect2.remove()
+		var r = group.node.getAttribute('transform')
+		var s = r.split(',');
+        var dx = s[s.length - 2];
+        var dy = s[s.length - 1].split(')')[0];
+        rect2 = draw.rect(50,50).move(rect2.x() + parseInt(dx),rect2.y() + parseInt(dy)).fill('red').draggable()
     })
 </script>
 </body>
