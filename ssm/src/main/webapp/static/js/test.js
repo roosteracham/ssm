@@ -18,71 +18,6 @@ $(function(){
     });
 });
 
-/*
-
-var wId = "w";
-var index = 0;
-var startX = 0, startY = 0;
-var flag = false;
-var rectLeft = "0px", rectTop = "0px", rectHeight = "0px", rectWidth = "0px";
-
-document.onmousedown = function(e){
-    flag = true;
-    try{
-        var evt = window.event || e;
-        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-        startX = evt.clientX + scrollLeft;
-        startY = evt.clientY + scrollTop;
-        index++;
-        var div = document.createElement("div");
-        div.id = wId + index;
-        div.className = "div";
-        div.style.marginLeft = startX + "px";
-        div.style.marginTop = startY + "px";
-        document.body.appendChild(div);
-    }catch(e){
-        //alert(e);
-    }
-};
-
-document.onmouseup = function(){
-    try{
-        document.body.removeChild($(wId + index));
-        var div = document.createElement("div");
-        div.className = "rect";
-        div.style.marginLeft = rectLeft;
-        div.style.marginTop = rectTop;
-        div.style.width = rectWidth;
-        div.style.height = rectHeight;
-        document.body.appendChild(div);
-    }catch(e){
-        //alert(e);
-    }
-    flag = false;
-};
-
-document.onmousemove = function(e){
-    if(flag){
-        try{
-            var evt = window.event || e;
-            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-            var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-            rectLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
-            rectTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
-            rectHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
-            rectWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
-            $(wId + index).style.marginLeft = rectLeft;
-            $(wId + index).style.marginTop = rectTop;
-            $(wId + index).style.width = rectWidth;
-            $(wId + index).style.height = rectHeight;
-        }catch(e){
-            //alert(e);
-        }
-    }
-};
-*/
-
 // 当前svg根元素
 var svg = null;
 
@@ -95,7 +30,8 @@ var allSvgs = [
     "POLYGON",
     "POLYLINE",
     "PATH",
-    "TEXT"
+    "TEXT",
+    "TSPAN"
 ];
 
 // 是否是图形元素
@@ -115,9 +51,14 @@ $("#newSvg").on("click", function () {
         svg = SVG("svgContainer").size("100%", "100%");
         // 为svg添加点击事件， 点击非图形元素时取消选中效果
         svg.click(clickNonEleToClear);
+
         //svg 添加鼠标按下事件
         svg.mousedown(mousedownOnNonEle);
+
+        //svg 添加鼠标弹起事件
         svg.mouseup(mouseupOnSVG);
+
+        //svg 添加鼠标移动事件
         svg.mousemove(mouseoverOnSVG);
     }
 });
@@ -126,8 +67,8 @@ $("#newSvg").on("click", function () {
 var isClick = true;
 
 // 鼠标按下时间
-var downTime,
-    upTime;  // 鼠标弹起时间
+var downTime = 0,
+    upTime = 0;  // 鼠标弹起时间
 
 // 为true时，鼠标移动事件有效
 var isMouseover = false;
@@ -139,24 +80,32 @@ var beginX, beginY,
 // 保存矩形
 var rectOnMousemove = null;
 
+var clearOthers = true;
+
 // 鼠标按下事件
 function mousedownOnNonEle(e) {
-    if (e.target.nodeName === 'svg') {
 
-        downTime = new Date().getTime();
-        //清除所有选中状态
-        clearAllSelected();
+    //将宽度和高度重置为0
+    widthM = 0;
+    heightM = 0;
+
+    downTime = new Date().getTime();
+
+    // 鼠标移动时响应，画矩形
+    isMouseover = true;
+
+    if (e.target.nodeName === 'svg') {
 
         // 如果class 为 rectMousemove 的元素仍存在则删除
         deleteRectMousemove();
+
+        //清除所有选中状态
+        clearAllSelected();
 
         // 获取鼠标点击时相对于svg背景的坐标
         beginX = e.layerX;
         beginY = e.layerY;
         //console.log(beginX, beginY)
-
-        // 鼠标移动时响应，画矩形
-        isMouseover = true;
 
         // 画矩形， 此矩形被 rectMousemove class标识 ， 在鼠标弹起时依据此class 删除
         // 在鼠标移动时，依据此class 选择，并根据鼠标偏移量设置此矩形的宽度和高度
@@ -167,11 +116,29 @@ function mousedownOnNonEle(e) {
            })
            .addClass('rectMousemove')
            .move(beginX, beginY)
+    } else { // 若点击在图形元素上，则判断是否被选中，未被选中清除其他元素被选中的状态
+        var o;
+        if (e.target.nodeName === 'tspan') {
+            o = e.target.instance.parent();
+        } else {
+            o = e.target.instance;
+        }
+        var classes = o.classes();
+        for (var i = 0; i < classes.length; i++) {
+            if (classes[i] === 'selected') {
+                clearOthers = false;
+                break;
+            }
+        }
+        if (clearOthers) {
+            clearAllSelected();
+        }
     }
 }
 
-// 删除虽鼠标变化的矩形
+// 删除随鼠标变化的矩形
 function deleteRectMousemove() {
+
     var rects = SVG.select('.rectMousemove');
     for (var i = 0; i < rects.length(); i++) {
         var rect = rects.get(i);
@@ -179,51 +146,60 @@ function deleteRectMousemove() {
     }
 }
 
-// 鼠标谈起处理事件
+// 鼠标弹起处理事件
 function mouseupOnSVG(e) {
 
     if (isMouseover) {
-        // 判断矩形中包含的图形，在其中则被选中
-        var eles = SVG.select('.ele');
-        var i = 0;
-        for (; i < eles.length(); i++) {
-            var ele = eles.get(i);
-            var cx = ele.cx(),
-                cy = ele.cy();
 
-            // 如果元素中心在class为的矩形内， 则该元素被选中
-            if (rectOnMousemove.inside(cx, cy)) {
-                limiteDragArea(ele).selectize()
-                    .addClass('selected')
-                    .resize();
+        if (rectOnMousemove !== null){
+
+            // 判断矩形中包含的图形，在其中则被选中
+            var eles = SVG.select('.ele');
+            for (var i = 0; i < eles.length(); i++) {
+
+                var ele = eles.get(i);
+                var cx = ele.cx(),
+                    cy = ele.cy();
+
+                // 如果元素中心在class为的矩形内， 则该元素被选中
+                if (rectOnMousemove.inside(cx, cy)) {
+                    limiteDragArea(ele).selectize()
+                        .addClass('selected')
+                        .resize();
+                }
             }
         }
 
-        // 获取鼠标点击时相对于svg背景的坐标
-        //endX = e.layerX;
-        //endY = e.layerY;
-        //console.log('mouse up', endX, endY)
-
-        // 鼠标移动时，不做任何处理
-        isMouseover = false;
-
-        //将宽度和高度重置为0
-        widthM = 0;
-        heightM = 0;
         // 删除虽鼠标变化的矩形
         deleteRectMousemove();
+    }
 
-        // 保存矩形的变量置null
-        rectOnMousemove = null;
+    // 鼠标移动时，不做任何处理
+    isMouseover = false;
 
-        // 计算鼠标点击经过的时间，时间大于200ms，阻止click事件
+    // 保存矩形的变量置null
+    rectOnMousemove = null;
+
+    // 计算鼠标点击经过的时间，时间大于200ms，阻止click事件
+    if (downTime > upTime) {
+
         upTime = new Date().getTime();
-        if ((upTime - downTime) > 200) {
-            isClick = false;
-        } else {
-            isClick = true;
-        }
+    }
+    if ((upTime - downTime) > 200) {
+        isClick = false;
+    } else {
+        isClick = true;
+    }
+    downTime = upTime;
 
+    if (isSvgElement(e.target.nodeName) && clearOthers) {
+        var o = e.target.instance;
+        if (e.target.nodeName === 'tspam') {
+            o = e.target.instance.parent();
+        }
+        selectClicked(o);
+    } else {
+        clearOthers = true;
     }
 }
 
@@ -235,18 +211,27 @@ function mouseoverOnSVG(e) {
         var dx = e.movementX,
             dy = e.movementY;
 
-        // 设置矩形宽度和高度
-        widthM += dx;
-        heightM += dy;
-        var rect = SVG.select('.rectMousemove');
+        if (e.target.nodeName === 'svg') {
 
-        // svg中只应该有一个class 为 rectMouseMove 的矩形
-        if(rect.length() === 1) {
+            // 设置矩形宽度和高度
+            widthM += dx;
+            heightM += dy;
+            widthM = widthM > 0 ? widthM : 0;
+            heightM = heightM > 0 ? heightM : 0;
+            var rect = SVG.select('.rectMousemove');
 
-            rect.get(0).size(widthM, heightM);
+            // svg中只应该有一个class 为 rectMouseMove 的矩形
+            if(rect.length() === 1) {
+
+                rect.get(0).size(widthM, heightM);
+            }
+        } else {
+            var eles = SVG.select('.selected');
+            for (var i = 0; i < eles.length(); i++) {
+                var ele = eles.get(i);
+                ele.dmove(dx, dy);
+            }
         }
-        //console.log('over', e.clientX, e.clientY, e.movementX,
-         //   e.movementY, e.target.scrollX, e.target.scrollY)
     }
 }
 
@@ -297,14 +282,35 @@ function rotate(arc) {
     }
 }
 
+// 旋转
 // 左旋90度
-$("#rotateLeft").on("click", function () {
+$("#rotateLeft_90").on("click", function () {
     rotate(-90);
 });
 
 // 右旋90度
-$("#rotateRight").on("click", function () {
+$("#rotateRight_90").on("click", function () {
     rotate(90);
+});
+
+// 左旋45度
+$("#rotateLeft_45").on("click", function () {
+    rotate(-45);
+});
+
+// 右旋45度
+$("#rotateRight_45").on("click", function () {
+    rotate(45);
+});
+
+// 左旋30度
+$("#rotateLeft_30").on("click", function () {
+    rotate(-30);
+});
+
+// 右旋30度
+$("#rotateRight_30").on("click", function () {
+    rotate(30);
 });
 
 //点击元素选中，其他元素清除选中效果
@@ -350,9 +356,26 @@ function clearAllSelected() {
 
 // 点击非图片区域取消选中
 function clickNonEleToClear(e) {
-    if (isClick && e.target.nodeName === "svg") {
+    if (isClick) { // 点击
         clearAllSelected();
+        if (isSvgElement(e.target.nodeName)) {
+            //clearAllSelected();
+            var o;
+            if (e.target.nodeName === 'tspan') {
+                o = e.target.instance.parent();
+            } else {
+                o = e.target.instance
+            }
+            limiteDragArea(o)
+                .selectize()
+                .addClass('selected')
+                .resize();
+            deleteRectMousemove();
+        }
+    } else { //拖动
+
     }
+
 }
 
 //拖放区域限制
@@ -394,14 +417,27 @@ function myResize(o) {
         .addClass('ele');
 
     // 为元素添加点击事件
-    selectClickedEle(o);
+    //selectClickedEle(o);
+
+    // 为元素添加鼠标按下事件
+    mousedownOnEle(o);
+
+    // 为元素添加鼠标弹起事件
+    //mouseupOnEle(o);
 }
 
+// 鼠标在元素上被按下
+function mousedownOnEle(o) {
+    o.mousedown(mousedownOnNonEle);
+}
+
+// 鼠标在元素上被弹起
+function mouseupOnEle(o) {
+    o.mouseup(mouseupOnSVG);
+}
 // 点击选中
 function selectClickedEle(o) {
-    o.click(function () {
-        selectClicked(o);
-    });
+    o.click(selectClicked(o));
 }
 
 // 新增直线
@@ -412,7 +448,7 @@ $("#line").on("click", function () {
     // 创建线条对象
     var line = svg.line(100, 100, 200, 100)
         .stroke({
-            width : 1
+            width : 2
         });
     // 可拖放,可缩放
     myResize(line);
