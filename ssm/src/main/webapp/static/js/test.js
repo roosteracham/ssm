@@ -22,7 +22,7 @@ $(function(){
 var svg = null;
 
 // svg图形
-var allSvgs = [
+var simpleSVG = [
     "RECT",
     "CIRCLE",
     "ELLIPSE",
@@ -31,16 +31,40 @@ var allSvgs = [
     "POLYLINE",
     "PATH",
     "TEXT",
-    "TSPAN"
+    "TSPAN",
+    "GROUP"
 ];
 
 // 是否是图形元素
 function isSvgElement(name) {
-    for (var i = 0; i < allSvgs.length; i++) {
-        if (allSvgs[i].toLowerCase() === name) {
+    for (var i = 0; i < simpleSVG.length; i++) {
+        if (simpleSVG[i].toLowerCase() === name) {
             return true;
         }
     }
+    return false;
+}
+
+// 依据class 判断是否是图形元素
+function isSVGElementByClass(o) {
+    return hasClass(o, 'ele');
+}
+
+// 是否具有某个class， 有则返回true
+function hasClass(o, cla) {
+
+    // 获得所有的class
+    var classes = o.classes();
+
+    for (var i = 0; i < classes.length; i++) {
+
+        if (classes[i] === cla) {
+            // 如果具有cla 则返回true
+            return true;
+        }
+    }
+
+    // 如果不具有cla 则返回false
     return false;
 }
 
@@ -60,6 +84,9 @@ $("#newSvg").on("click", function () {
 
         //svg 添加鼠标移动事件
         svg.mousemove(mouseoverOnSVG);
+
+        // 放到localstorage 里面
+        //loc
     }
 });
 
@@ -194,7 +221,7 @@ function mouseupOnSVG(e) {
 
     if (isSvgElement(e.target.nodeName) && clearOthers) {
         var o = e.target.instance;
-        if (e.target.nodeName === 'tspam') {
+        if (e.target.nodeName === 'tspan') {
             o = e.target.instance.parent();
         }
         selectClicked(o);
@@ -234,84 +261,6 @@ function mouseoverOnSVG(e) {
         }
     }
 }
-
-// 清除工程元素
-$("#clearElements").on("click", function () {
-    if(svg !== null) {
-        svg.clear();
-    }
-});
-
-// 清除工程
-$("#deletesvg").on("click", function () {
-    svg.clear();
-    svg = null;
-    $("#svgContainer svg").remove();
-});
-
-// 选中删除元素
-$("#deleteEle").on("click", function () {
-    var del = SVG.select('.selected');
-    for (var i = 0;i < del.length(); i++) {
-        var o = del.get(i);
-        if (isSvgElement(o.node.nodeName)) {
-            o.selectize(false)
-                .resize('stop');
-            o.node.remove();
-        }
-    }
-});
-
-//组合元素
-$('#groupEle').on('click', function () {
-
-});
-
-//旋转元素
-function rotate(arc) {
-    var del = SVG.select('.selected');
-    for (var i = 0;i < del.length(); i++) {
-        var o = del.get(i);
-        if (isSvgElement(o.node.nodeName)) {
-            o.transform({
-                rotation : arc, // 旋转角度
-                relative : true // 相对当前位置旋转
-            });
-            limiteDragArea(o);
-        }
-    }
-}
-
-// 旋转
-// 左旋90度
-$("#rotateLeft_90").on("click", function () {
-    rotate(-90);
-});
-
-// 右旋90度
-$("#rotateRight_90").on("click", function () {
-    rotate(90);
-});
-
-// 左旋45度
-$("#rotateLeft_45").on("click", function () {
-    rotate(-45);
-});
-
-// 右旋45度
-$("#rotateRight_45").on("click", function () {
-    rotate(45);
-});
-
-// 左旋30度
-$("#rotateLeft_30").on("click", function () {
-    rotate(-30);
-});
-
-// 右旋30度
-$("#rotateRight_30").on("click", function () {
-    rotate(30);
-});
 
 //点击元素选中，其他元素清除选中效果
 function selectClicked(o) {
@@ -439,185 +388,3 @@ function mouseupOnEle(o) {
 function selectClickedEle(o) {
     o.click(selectClicked(o));
 }
-
-// 新增直线
-$("#line").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    // 创建线条对象
-    var line = svg.line(100, 100, 200, 100)
-        .stroke({
-            width : 2
-        });
-    // 可拖放,可缩放
-    myResize(line);
-});
-
-//新增文本
-$("#text").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var text = svg.text('text');
-    text.font({
-        fill : "black",
-        family: 'Inconsolata',
-        size : 30
-    });
-    myResize(text);
-});
-
-//新增矩形
-$("#rect").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var rect = svg.rect(100, 200)
-       .attr("fill", "red");
-    myResize(rect);
-});
-
-//新增圆角矩形
-$("#roundRect").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var roundRect = svg.rect(100, 200)
-        .radius(10)
-        .attr("fill", "red");
-    myResize(roundRect);
-});
-
-//新增五边形
-$("#pentagon").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var path = '100,10 190,80 150,180 50,180 10,80',
-        fill = 'red';
-    var pentagon = polygonGraph(path, fill);
-    myResize(pentagon);
-});
-
-//新增五角星
-$('#pentagram').on('click', function () {
-    if(svg === null) {
-        return;
-    }
-    var path = '147.6,265.5 177,281 171.4,248.2 195.1,225.1 162.3,220.3 ' +
-        '147.6,190.5 132.9,220.3 100,225.1 123.8,248.2 118.2,281',
-        fill = 'yellow';
-    var pentagram = polygonGraph(path, fill);
-    myResize(pentagram);
-});
-
-//新增六边形
-$("#hexagon").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var path = '37.5,129 0,65 37.5,0 112.3,0 150,65 112.3,129',
-        fill = 'red';
-    var hexagon = polygonGraph(path, fill);
-    myResize(hexagon);
-});
-
-//新增八边形
-$("#octagon").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var path = '50,0 120,0 170,50 170,120 120,170 50,170 0,120 0,50',
-    fill = 'red';
-    var octagon = polygonGraph(path, fill);
-    myResize(octagon);
-});
-
-//新增圆形
-$("#circle").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var circle = svg.circle(100, 200)
-        .attr("fill", "red");
-    myResize(circle);
-});
-
-// 新增椭圆
-$("#ellipse").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var ellipse = svg.ellipse(200, 100)
-        .attr("fill", "red");
-    myResize(ellipse);
-});
-
-//新增三角形
-$("#tangle").on("click", function () {
-    if(svg === null) {
-        return;
-    }
-    var path = '30,0 60,50 0,50',
-        fill = 'green';
-    var polygon = polygonGraph(path, fill);
-    myResize(polygon);
-});
-
-// svg polygon绘制图形
-function polygonGraph(path, fill) {
-    return svg.polygon(path)
-        .fill(fill)
-        .stroke({
-            width : 1
-        });
-}
-
-// 新增工业控制图形
-// 新增管道
-$('#pipe').on('click', function () {
-    if(svg === null) {
-        return;
-    }
-    var rect = svg.rect(80, 100);
-    var gradient = svg.gradient('linear', function(stop) {
-        stop.at(0, 'gray')
-        stop.at(0.8, 'white')
-        stop.at(1, 'gray')
-    });
-    // 渐变起止区域
-//gradient.from(0,'100%').to('50%', '100%')
-    rect.attr({ fill: gradient });
-    myResize(rect);
-});
-
-// 新增灯
-$('#light').on('click', function () {
-    if(svg === null) {
-        return;
-    }
-    var light = svg.path().M({x : 79.4, y : 67.8})
-        .c({x : 0, y : -18.4}, {x : -16.9, y : -33.2}, {x : -37.7, y : -33.2})
-        .S({x : 4, y : 49.4}, {x : 4, y : 67.8})
-        .c({x : 0, y : 7.3}, {x : 2.7, y : 14}, {x : 7.1, y : 19.4})
-        .c({x : 0.5, y : 0.7}, {x : 15.5, y : 21.9}, {x : 16.7, y : 30.8})
-        //.c({x : 1.3, y : 9.1}, {x : 1.3, y : 11.5}, {x : 1.3, y : 11.5})
-        .h(25.2)
-        .v(6)
-        .h(-25.2)
-        .v(6)
-        .h(25.2)
-        .v(-12)
-        //.c({x : 0, y : 0}, {x : 0, y : -2.4}, {x : 1.3, y : -11.5})
-        .c({x : 1.3, y : -8.9}, {x : 16.2, y : -30}, {x : 16.7, y : -30.8})
-        .C({x : 76.8, y : 81.8}, {x : 79.4, y : 75.1}, {x : 79.4, y : 67})
-        .fill('green')
-        .stroke({
-            color: 'white',
-            width: 2,
-            linecap: 'round',
-            linejoin: 'round'
-        });
-    myResize(light);
-});

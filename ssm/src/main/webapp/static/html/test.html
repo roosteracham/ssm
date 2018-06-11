@@ -7,6 +7,10 @@
 <body>
 	<button id="b">add</button>
     <button id="b1">add</button>
+	<button id="b2">add</button>
+	<button id="b3">add</button>
+	<button id="b4">add</button>
+	<button id="b5">add</button>
 <div class="svg-container" id="svgContainer" style="position: relative; left: 15%;
     width: 80%; background-color: lightgray; height: 70%">
 <!--	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" >
@@ -24,11 +28,12 @@
 <script>
     var draw = SVG('svgContainer').size(500, 330)
 
-	var rect2 = draw.rect(50,50).move(250,50).fill('red').draggable()
     var group = draw.group()
-    var rect = group.rect(50,50).move(100,100).fill('red')
-    var rect1 = group.rect(50, 50).fill('red')
-	group.draggable()/*.on('dragmove', function (e) {
+    var rect = group.rect(50,50).move(100,100).fill('red').draggable()
+    var rect1 = group.rect(50, 50).fill('blue').move(120,50).draggable()
+    var rect2 = group.rect(50,50).move(140,70).fill('green').draggable()
+	group.draggable()
+	/*.on('dragmove', function (e) {
 		e.preventDefault()
 		this.move(this.x() + e.movemenX, this.y() + e.movemenY)
     })*/
@@ -36,6 +41,7 @@
 		.resize()
 		.fill('none')*/
     $('#b').on('click', function () {
+        //rect2.draggable(false)
         group.add(rect2)
         var r = group.node.getAttribute('transform')
         var s = r.split(',');
@@ -50,6 +56,18 @@
         var dx = s[s.length - 2];
         var dy = s[s.length - 1].split(')')[0];
         rect2 = draw.rect(50,50).move(rect2.x() + parseInt(dx),rect2.y() + parseInt(dy)).fill('red').draggable()
+    })
+    $('#b2').on('click', function () {
+        rect2.back()
+    })
+    $('#b3').on('click', function () {
+        rect2.backward()
+    })
+    $('#b4').on('click', function () {
+        rect2.front()
+    })
+    $('#b5').on('click', function () {
+        rect2.forward()
     })
 </script>
 </body>
