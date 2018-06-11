@@ -5,68 +5,17 @@
 	<meta charset="utf-8">
 </head>
 <body>
-<!--<svg baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%"
-     viewBox="0 0 18 22.001">
-    <rect x="50" y="20" width="150" height="150"
-          style="fill:blue;stroke:pink;stroke-width:5;fill-opacity:0.1;
-  stroke-opacity:0.9"/>
-</svg>-->
-<div class="svgContainer" style="left: 20%; width: 70%; background-color: lightgray; height: 70%"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.5/svg.js"></script>
-<script src="../js/svg.draggy.js"></script>
-<script src="https://d3js.org/d3.v5.js"></script>
-<div class="graph"></div>
-<script>/*
-    window.addEventListener("load", function () {
-        var svg = new SVG(document.querySelector(".graph")).size("100%", 500);
+<script src="../js/jscolor.js"></script>
 
-        // Plain draggy
-        svg.rect(70, 100)
-            .center(70, 90)
-            .fill("#388E3C")
-            .draggy()
-        ;
-
-        // Grouped draggy
-        var group = svg.group().draggy();
-        group.rect(100, 100).center(180, 90).fill("#4CAF50");
-        group.rect(100, 100).center(180, 200).fill("#C8E6C9");
-
-        // Constraind with object
-        var elm = svg.rect(100,100).fill("#8BC34A").center(290, 90).draggy({
-            minX: 200
-            , minY: 50
-            , maxX: 600
-            , maxY: 200
-        });
-
-        var s = null
-            , t = null
-        ;
-
-        elm.on("dragstart", function() {
-            s = elm.clone().opacity(0.2);
-        });
-
-        elm.on("dragmove", function() {
-            s.animate(200, '>').move(elm.x(), elm.y());
-        });
-
-        elm.on("dragend", function() {
-            s.remove();
-        });
-
-        // Constraind with function
-        svg.rect(100,100).fill("#009688").center(70, 220).draggy(function(x, y) {
-            return {
-                x: x < 400
-                , y: y < 300
-            };
-        });
-    });*/
-	window.onload = function () {
-        var draw = SVG(".svgContainer").size("100%", 400);
-        var rect = draw.rect(100, 100).fill("red").move(20, 20);
+Color: <button onclick="c();"><input id="foo" class="jscolor" onchange="b();" value="ab2567" hidden="hidden">color
+</button>
+<script >
+	function c() {
+		//document.getElementsByTagName('input').jscolor.show()
+        document.getElementById('foo').jscolor.show()
+    }
+    function b() {
+        alert(document.getElementById('foo').value)
     }
 </script>
 </body>

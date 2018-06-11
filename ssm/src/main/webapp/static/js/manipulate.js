@@ -140,13 +140,17 @@ $('#forwardLayer').on('click', function () {
     }
 });
 
-// 改变颜色
-$('#forwardLayer').on('click', function () {
+// 改变颜色,弹出颜色选择器
+$('#changeColor').on('click', function (e) {
+    document.getElementById('colorPicker').jscolor.show()
+});
 
+// 改变图形的颜色， 修改fill属性
+$('#colorPicker').on('change', function () {
+    var c = '#' + document.getElementById('colorPicker').value;
     // 只有一个图形被选中才能够置向上一层
     var eles = SVG.select('.selected');
     if (eles.length() === 1) {
-
-        eles.get(0).fill();
+        eles.get(0).fill(c);
     }
-});
+})
