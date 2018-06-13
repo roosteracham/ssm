@@ -1,7 +1,12 @@
-<!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<%--
+  Created by IntelliJ IDEA.
+  User: rooster
+  Date: 2018/6/12
+  Time: 11:02
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>左侧导航</title>
@@ -10,7 +15,7 @@
 <body id="bg">
 <div id="menu">
     <button id="newProject" >新建工程</button>
-    <button id="newSvg" >新建工程</button>
+    <button id="newSvg" >新建画面</button>
     <button id="exportProject" >保存工程</button>
     <button id="importProject" >导入工程</button>
     <button id="clearElements" >清空元素</button>
@@ -71,25 +76,26 @@
     </div>
 
     <div class="svg-container" id="svgContainer" style="position: relative; left: 15%;
-    width: 80%; background-color: lightgray; height: 70%">
+    top:1%; width : 80%; height: 90%; background-color: lightgray; ">
     </div>
 </div>
 
-<link rel="stylesheet" type="text/css" href="../css/svg.select.css"/>
-<link rel="stylesheet" type="text/css" href="../css/test.css"/>
-<link rel="stylesheet" href="../css/bootstrap.min.css">
-<script type="text/javascript" src="../js/jquery.min.js"></script>
-<script type="text/javascript" src="../js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/svg.js"></script>
-<script type="text/javascript" src="../js/svg.draggable.js"></script>
-<script type="text/javascript" src="../js/svg.select.js"></script>
-<script type="text/javascript" src="../js/svg.resize.js"></script>
-<script type="text/javascript" src="../js/svg.path.js"></script>
-<script type="text/javascript" src="../js/jscolor.js"></script>
-<script type="text/javascript" src="../js/test.js"></script>
-<script type="text/javascript" src="../js/project.js"></script>
-<script type="text/javascript" src="../js/manipulate.js"></script>
-<script type="text/javascript" src="../js/addindustrialEle.js"></script>
+<link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="../../static/css/svg.select.css"/>
+<link rel="stylesheet" type="text/css" href="../../static/css/test.css"/>
+<script type="text/javascript" src="../../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../static/js/svg.js"></script>
+<script type="text/javascript" src="../../static/js/svg.draggable.js"></script>
+<script type="text/javascript" src="../../static/js/svg.select.js"></script>
+<script type="text/javascript" src="../../static/js/svg.resize.js"></script>
+<script type="text/javascript" src="../../static/js/svg.path.js"></script>
+<script type="text/javascript" src="../../static/js/jscolor.js"></script>
+<script type="text/javascript" src="../../static/js/test.js"></script>
+<script type="text/javascript" src="../../static/js/ajaxOption.js"></script>
+<script type="text/javascript" src="../../static/js/project.js"></script>
+<script type="text/javascript" src="../../static/js/manipulate.js"></script>
+<script type="text/javascript" src="../../static/js/addindustrialEle.js"></script>
 
 <!-- 模态框（Modal） 新建工程时弹出 -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

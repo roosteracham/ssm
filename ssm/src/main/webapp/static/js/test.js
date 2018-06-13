@@ -68,28 +68,6 @@ function hasClass(o, cla) {
     return false;
 }
 
-// 新建工程
-$("#newSvg").on("click", function () {
-    if (svg === null) {
-        // 新建svg元素
-        svg = SVG("svgContainer").size("100%", "100%");
-        // 为svg添加点击事件， 点击非图形元素时取消选中效果
-        svg.click(clickNonEleToClear);
-
-        //svg 添加鼠标按下事件
-        svg.mousedown(mousedownOnNonEle);
-
-        //svg 添加鼠标弹起事件
-        svg.mouseup(mouseupOnSVG);
-
-        //svg 添加鼠标移动事件
-        svg.mousemove(mouseoverOnSVG);
-
-        // 放到localstorage 里面
-        //loc
-    }
-});
-
 // 是否是点击事件
 var isClick = true;
 

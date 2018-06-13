@@ -153,4 +153,4 @@ $('#colorPicker').on('change', function () {
     if (eles.length() === 1) {
         eles.get(0).fill(c);
     }
-})
+});
