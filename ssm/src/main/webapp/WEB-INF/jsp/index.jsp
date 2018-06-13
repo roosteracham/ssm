@@ -38,6 +38,8 @@
         <input id="colorPicker" class="jscolor" value="ab2567" hidden="hidden" />
         填充颜色
     </button>
+    <button id="bindPoint" >绑定测点</button>
+    <button id="point" >绑定测点</button>
 </div>
 <div class="mycontainer">
 
@@ -109,14 +111,46 @@
                     模态框（Modal）标题
                 </h4>
             </div>
-            <div id="modal" class="modal-body"><!--
-                <span class="input-group-addon">工程名称&nbsp;&nbsp;</span>-->
-                <!--<input id="input_project_name" value="工程名称" class="form-control"/>-->
+            <div id="modal" class="modal-body">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消
                 </button>
                 <button id="confirmNewPro" type="button" class="btn btn-primary" >
+                    确认
+                </button>
+                <!--<input type="button" value="首页" id="confirmNewPro" class="btn btn-default" />-->
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<!-- 模态框（Modal） 绑定测点时弹出 -->
+<div class="modal fade" id="myBindPointModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myBindPointModalLabel">
+                    模态框（Modal）标题
+                </h4>
+            </div>
+            <div id="modalBindPoint" class="modal-body">
+
+                // 下拉菜单
+                <select id="pointType">
+                    <option value="number" selected="selected">数值</option>
+                    <option value="liquidLevel">液位</option>
+                    <option value="switch" >开关</option>
+                </select>
+                <input type="text" id="pointName" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button id="confirmBindPoint" type="button" class="btn btn-primary" >
                     确认
                 </button>
                 <!--<input type="button" value="首页" id="confirmNewPro" class="btn btn-default" />-->

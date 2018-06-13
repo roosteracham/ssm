@@ -154,3 +154,30 @@ $('#colorPicker').on('change', function () {
         eles.get(0).fill(c);
     }
 });
+
+// 保存
+var selectedEle = null;
+
+// 绑定测点
+$('#bindPoint').on('click', function () {
+
+    var eles = SVG.select('.selected');
+    if (eles.length() === 1) {
+        selectedEle = eles.get(0);
+    }
+
+    // show 模态框
+    $('#myBindPointModal').modal('show');
+});
+
+// 运行
+$('#point').on('click', function () {
+
+    // 被选中的元素
+    /*var eles = SVG.select('.bindPoint');
+
+    for (var i = 0; i < eles.length(); i++) {
+        var ele = eles.get(i);
+        console.log(ele.data('pointName'), ele.data('type') , ele.data('value'))
+    }*/
+});

@@ -2,6 +2,13 @@
 *  操作工程
 * */
 
+// 模态框怎么响应，对应不同按钮的id
+var eventTarget = {
+    newProject : 'newProject',
+    newSvg : 'newSvg',
+    bindPoint : 'bindPoint'
+};
+
 $(function () {
 
     // 模态框弹出前执行
@@ -10,18 +17,18 @@ $(function () {
         // 清空模态框内容
         var $modal = $('#modal');
         $modal.empty();
-        var child;
-        // 新建工程
-        if (id === 'newProject') {
-            child = $("<input>", {
-                type:'text',
-                val:'工程名称',
-                id : 'newInput',
-                function:function(){
-                    $(this).addClass('form-control');
-                }
-            });
-        } else if (id === 'newSvg') { // 新建画面
+        var val;
+
+        switch (id) {
+            case eventTarget.newProject : // 新建工程
+                val = '工程名称';
+                break;
+            case eventTarget.newSvg : // 新建画面
+                val = '工程画面';
+                break;
+        }/*
+        if (id === eventTarget.newProject) {
+        } else if (id === eventTarget.newSvg) {
             child = $("<input>", {
                 type:'text',
                 val:'画面名称',
@@ -30,7 +37,16 @@ $(function () {
                     $(this).addClass('form-control');
                 }
             });
-        }
+        }*/
+
+        var child = $("<input>", {
+            type:'text',
+            val : val,
+            id : 'newInput',
+            function:function(){
+                $(this).addClass('form-control');
+            }
+        });
         $modal.append(child);
     });
 
@@ -56,8 +72,32 @@ $(function () {
         isConfirmNew = false;
     });
 
+    // 绑定测点
+    $('#myBindPointModal').on('click', function () {
+        var type = $('#pointType').val();
+        var pointName = $('#pointName').val();
+
+        if (type !== null && pointName !== null &&
+            type !== '' && pointName !== '') {
+
+            var point = {
+                pointName : pointName,
+                type : type,
+                value : -1
+            };
+
+            // 绑定测点
+            selectedEle.addClass('bindPoint');
+            selectedEle.data(point);
+
+            // 关闭模态框
+            $('#myBindPointModal').modal('hide');
+        }
+    });
+
     // 新建工程和新建画面
     $('#confirmNewPro').click(function () {
+
         isConfirmNew = true;
         // 关闭模态框
         $('#myModal').modal('hide');
@@ -79,6 +119,9 @@ $("#newProject").on("click", function (e) {
     // id 被点击按钮的id
     id = e.target.id;
 
+    // 模态框标题栏
+    $('#myModalLabel')[0].innerText = '输入工程名称';
+
     // 显示模态框
     $('#myModal').modal('show');
 });
@@ -88,6 +131,10 @@ $("#newSvg").on("click", function (e) {
 
     // id 被点击按钮的id
     id = e.target.id;
+
+    // 模态框标题栏
+    $('#myModalLabel')[0].innerText = '输入画面名称';
+
     if (projectName === null) {
         alert('未创建工程，无法新建画面');
         return;
