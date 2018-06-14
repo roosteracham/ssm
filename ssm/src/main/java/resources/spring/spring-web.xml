@@ -3,12 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd
 	http://www.springframework.org/schema/mvc
-	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+    http://www.springframework.org/schema/websocket
+    http://www.springframework.org/schema/websocket/spring-websocket.xsd">
     <!-- 配置SpringMVC -->
     <!-- 1.开启SpringMVC注解模式 -->
     <!-- 简化配置：
@@ -36,4 +39,16 @@
 
     <!-- 4.扫描web相关的bean -->
     <context:component-scan base-package="com.zsf.controller" />
+
+    <!-- websocket -->
+    <bean id="websocket" class="com.zsf.websocket.WebsocketEndPoint"/>
+
+    <bean id="websocket1" class="com.zsf.websocket.MyWebSocketHandler"/>
+
+    <websocket:handlers>
+        <websocket:mapping path="/websocket" handler="websocket1"/>
+        <websocket:handshake-interceptors>
+            <bean class="com.zsf.websocket.HandshakeInterceptor"/>
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
 </beans>

@@ -1,6 +1,7 @@
 /*
 *  操作图形
 * */
+
 // 清除工程元素
 $("#clearElements").on("click", function () {
     if(svg !== null) {
@@ -170,14 +171,115 @@ $('#bindPoint').on('click', function () {
     $('#myBindPointModal').modal('show');
 });
 
+// websocket实例
+var ws = null;
+
+// 测点类型
+var pointTypes = {
+    NUMBER : 'number',
+    LIQUIDLEVEL : 'liquidLevel',
+    SWITCH : 'switch'
+}
+
 // 运行
 $('#point').on('click', function () {
+    //
+    var data = '';
+    for (var key in bindPoints) {
+        data += key + ',';
+    }
+    if ("WebSocket" in window)
+    {
+        console.log("您的浏览器支持 WebSocket!");
+    // 被选中的元素 $("[class^='class_']")
+    var eles = SVG.select("[class^='.bindPoint_']");
 
-    // 被选中的元素
-    /*var eles = SVG.select('.bindPoint');
+    if (ws === null) {
+        var url = 'ws://localhost:8888/websocket';
+        ws = createNewWS(url);
+    }
 
-    for (var i = 0; i < eles.length(); i++) {
-        var ele = eles.get(i);
-        console.log(ele.data('pointName'), ele.data('type') , ele.data('value'))
-    }*/
+       // ws.send("发送数据");
+        var ele = eles.get(0);
+        //console.log(ele.data('pointName'), ele.data('type') , ele.data('value'))
+        ws.onopen = function () {
+            ws.send(data);
+            // Web Socket 已连接上，使用 send() 方法发送数据
+            console.log("数据发送中...");
+        };
+
+        ws.onmessage = function (evt) {
+            var received_msg = JSON.parse(evt.data);
+            //ele.node.firstChild.textContent = received_msg;
+
+            // 依类型 更新
+            for (var key in received_msg) {
+                var d = received_msg[key];
+                var cla = '.bindPoint_' + key;
+                var ele = SVG.select(cla).get(0);
+                var type = bindPoints[key]['type'];
+                switch (type) {
+                    case pointTypes.NUMBER:
+                        updateNumber(ele, d);
+                        break;
+                    case pointTypes.LIQUIDLEVEL:
+                        UpdateLiquidLevel(ele, d);
+                        break;
+                    case pointTypes.SWITCH:
+                        updateSwitch(ele, d);
+                        break;
+                }
+            }
+            // 更新图形
+            console.log("数据已接收 : " + received_msg);
+        };
+
+        ws.onclose = function() {
+            // 关闭 websocket
+            ws.close();
+            console.log("连接已关闭...");
+        };
+    } else {
+        // 浏览器不支持 WebSocket
+        console.log("您的浏览器不支持 WebSocket!");
+    }
 });
+
+$('#stop').on('click', function () {
+if (ws !== null) {
+    try {
+        ws.close();
+    } catch {
+        log('关闭时出错');
+    }
+}
+    ws = null;
+});
+
+// 更新数字
+function updateNumber(o, data) {
+    if (o.node.nodeName === 'text') {
+        o.node.firstChild.textContent = data;
+    }
+}
+
+//更新液位
+function UpdateLiquidLevel(o, data) {
+    var s = o.data('desc').split(' ');
+    var desc = s[0];
+    var height = s[1];
+    if (o.node.nodeName === 'rect') {
+        o.attr('height', data / desc * height);
+    }
+}
+
+// 更新开关
+function updateSwitch(o, data) {
+
+    var desc = o.data('desc');
+    if (data < desc) {
+        o.fill('green');
+    } else {
+        o.fill('red');
+    }
+}

@@ -12,7 +12,7 @@ var eventTarget = {
 $(function () {
 
     // 模态框弹出前执行
-    $('#myModal').on('shown.bs.modal', function () {
+    $('#myModal').on('show.bs.modal', function () {
 
         // 清空模态框内容
         var $modal = $('#modal');
@@ -26,18 +26,7 @@ $(function () {
             case eventTarget.newSvg : // 新建画面
                 val = '工程画面';
                 break;
-        }/*
-        if (id === eventTarget.newProject) {
-        } else if (id === eventTarget.newSvg) {
-            child = $("<input>", {
-                type:'text',
-                val:'画面名称',
-                id : 'newInput',
-                function:function(){
-                    $(this).addClass('form-control');
-                }
-            });
-        }*/
+        }
 
         var child = $("<input>", {
             type:'text',
@@ -52,6 +41,14 @@ $(function () {
 
     // 判定是否是点击的模态框的确定按钮
     var isConfirmNew = false;
+
+    // 模态框显示前执行
+    $('#myBindPointModal').on('show.bs.modal', function () {
+
+        // 清空
+        $('#pointName').val('');
+        $('#pointDesc').val('');
+    });
 
     // 模态框关闭前执行
     $('#myModal').on('hide.bs.modal', function () {
@@ -76,19 +73,30 @@ $(function () {
     $('#myBindPointModal').on('click', function () {
         var type = $('#pointType').val();
         var pointName = $('#pointName').val();
+        var desc = $('#pointDesc').val();
 
-        if (type !== null && pointName !== null &&
-            type !== '' && pointName !== '') {
+        if (type !== null && pointName !== null && desc !== null &&
+            type !== '' && pointName !== '' && desc !== '') {
 
-            var point = {
+            /*var point = {
                 pointName : pointName,
                 type : type,
                 value : -1
-            };
+            };*/
 
             // 绑定测点
-            selectedEle.addClass('bindPoint');
-            selectedEle.data(point);
+            var bp = 'bindPoint_' + pointName;
+            selectedEle.addClass(bp);
+            if (type === pointTypes.LIQUIDLEVEL) {
+
+                desc += ' ' + SVG.select('.selected').get(0).attr('height');
+            }
+            selectedEle.data('desc', desc, true);
+
+            // 加入到测点集合
+            bindPoints[pointName] = {
+                "type" : type
+            };
 
             // 关闭模态框
             $('#myBindPointModal').modal('hide');
@@ -99,8 +107,27 @@ $(function () {
     $('#confirmNewPro').click(function () {
 
         isConfirmNew = true;
+
         // 关闭模态框
         $('#myModal').modal('hide');
+    });
+
+
+    // 模态框选择框选择时响应
+    $('#pointType').change(function () {
+        var type = $('#pointType').val();
+        switch (type) {
+            case pointTypes.NUMBER :
+                $('#pointDescLabel')['0'].innerText = '描述';
+                $('#pointDesc').val('default');
+                break;
+            case pointTypes.LIQUIDLEVEL :
+                $('#pointDescLabel')['0'].innerText = '量程';
+                break;
+            case pointTypes.SWITCH :
+                $('#pointDescLabel')['0'].innerText = '阈值';
+                break;
+        }
     });
 });
 
@@ -175,6 +202,8 @@ $('#exportProject').on('click', function () {
 $('#importProject').on('click', function () {
     if (svg !== null) {
 
+        svg.svg('<rect width="100" height="50" fill="#f06"></rect>' +
+            '<rect width="100" height="50" fill="#f06" x="100"></rect>');
     } else {
         alert('工程未建立，无法导入');
     }

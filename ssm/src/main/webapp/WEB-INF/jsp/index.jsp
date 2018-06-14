@@ -39,7 +39,8 @@
         填充颜色
     </button>
     <button id="bindPoint" >绑定测点</button>
-    <button id="point" >绑定测点</button>
+    <button id="point" >运行</button>
+    <button id="stop" >断开</button>
 </div>
 <div class="mycontainer">
 
@@ -95,6 +96,7 @@
 <script type="text/javascript" src="../../static/js/jscolor.js"></script>
 <script type="text/javascript" src="../../static/js/test.js"></script>
 <script type="text/javascript" src="../../static/js/ajaxOption.js"></script>
+<script type="text/javascript" src="../../static/js/webSocket.js"></script>
 <script type="text/javascript" src="../../static/js/project.js"></script>
 <script type="text/javascript" src="../../static/js/manipulate.js"></script>
 <script type="text/javascript" src="../../static/js/addindustrialEle.js"></script>
@@ -139,13 +141,18 @@
             </div>
             <div id="modalBindPoint" class="modal-body">
 
-                // 下拉菜单
+                 <%-- 下拉菜单 --%>
+                <span>类型：</span>
                 <select id="pointType">
                     <option value="number" selected="selected">数值</option>
                     <option value="liquidLevel">液位</option>
                     <option value="switch" >开关</option>
                 </select>
-                <input type="text" id="pointName" />
+
+                <span>测点名</span>
+                <input type="text" id="pointName" value=""/>
+                <span id="pointDescLabel">描述</span>
+                <input type="text" id="pointDesc" value=""/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消
