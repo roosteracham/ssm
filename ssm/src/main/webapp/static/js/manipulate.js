@@ -51,17 +51,22 @@ $('#groupEle').on('click', function () {
         .addClass('grouparent')
         .addClass('ele');
     var eles = SVG.select('.selected');
-    for (var i = 0; i < eles.length(); i++) {
+    if (eles.length() > 1) {
+        for (var i = 0; i < eles.length(); i++) {
 
-        var ele = eles.get(i);
-        ele.draggable(false)
-            .selectize(false)
-            .resize('stop')
-            .addClass('groupEle')
-            .removeClass('ele');
-        group.add(ele);
+            var ele = eles.get(i);
+            ele.draggable(false)
+                .selectize(false)
+                .resize('stop')
+                .addClass('groupEle')
+                .removeClass('ele')
+                .removeClass('selected');
+            group.add(ele);
+        }
+        group.selectize()
+            .resize()
+            .draggable();
     }
-    group.draggable()
 });
 
 //旋转元素

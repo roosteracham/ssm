@@ -110,3 +110,7 @@ a {
 .rectMousemove {
     stroke-dasharray: 2, 2;
 }
+
+.svg_select_boundingRect {
+    fill : 'none';
+}

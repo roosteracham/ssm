@@ -221,7 +221,7 @@ $('#importProject').on('click', function () {
         var data = {
             "projectName" : projectName,
             "svgName" : svgName,
-            "svg" : getAllEles()
+            "svg" : ""
         };
         $.ajaxSetup({contentType : 'application/json; charset=utf-8'});
         $.post(urls.importProject, JSON.stringify(data), function (res) {

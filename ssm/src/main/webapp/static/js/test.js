@@ -50,6 +50,11 @@ function isSVGElementByClass(o) {
     return hasClass(o, 'ele');
 }
 
+// 是否是组合的元素
+function isGroupedEle(o) {
+   return o.hasClass('groupEle');
+}
+
 // 是否具有某个class， 有则返回true
 function hasClass(o, cla) {
 
@@ -85,6 +90,7 @@ var beginX, beginY,
 // 保存矩形
 var rectOnMousemove = null;
 
+// 多个元素被选中，一起拖动
 var clearOthers = true;
 
 // 鼠标按下事件
@@ -123,7 +129,7 @@ function mousedownOnNonEle(e) {
            .move(beginX, beginY)
     } else { // 若点击在图形元素上，则判断是否被选中，未被选中清除其他元素被选中的状态
         var o;
-        if (e.target.nodeName === 'tspan') {
+        if (e.target.nodeName === 'tspan' || isGroupedEle(e.target.instance)) {
             o = e.target.instance.parent();
         } else {
             o = e.target.instance;
@@ -199,7 +205,7 @@ function mouseupOnSVG(e) {
 
     if (isSvgElement(e.target.nodeName) && clearOthers) {
         var o = e.target.instance;
-        if (e.target.nodeName === 'tspan') {
+        if (e.target.nodeName === 'tspan' || isGroupedEle(o)) {
             o = e.target.instance.parent();
         }
         selectClicked(o);
@@ -281,25 +287,31 @@ function clearAllSelected() {
     }
 }
 
-// 点击非图片区域取消选中
+// 点击非图片区域取消选中, 点击图形元素被选中
 function clickNonEleToClear(e) {
     if (isClick) { // 点击
         clearAllSelected();
-        if (isSvgElement(e.target.nodeName)) {
+        var o = e.target.instance;
+        if (isSVGElementByClass(o)) {
             //clearAllSelected();
-            var o;
             if (e.target.nodeName === 'tspan') {
-                o = e.target.instance.parent();
-            } else {
-                o = e.target.instance
+                o = o.parent();
+                limiteDragArea(o)
+                    .selectize()
+                    .addClass('selected')
+                    .resize();
+                deleteRectMousemove();
             }
+        } else if (isGroupedEle(o)) {
+
+            o = o.parent();
             limiteDragArea(o)
                 .selectize()
                 .addClass('selected')
                 .resize();
             deleteRectMousemove();
         }
-    } else { //拖动
+            } else { //拖动
 
     }
 
