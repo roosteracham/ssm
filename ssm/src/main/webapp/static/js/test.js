@@ -59,11 +59,11 @@ function isGroupedEle(o) {
 function hasClass(o, cla) {
 
     // 获得所有的class
-    var classes = o.classes();
+    var clas = o.classes();
 
-    for (var i = 0; i < classes.length; i++) {
+    for (var i = 0; i < clas.length; i++) {
 
-        if (classes[i] === cla) {
+        if (clas[i] === cla) {
             // 如果具有cla 则返回true
             return true;
         }
@@ -291,30 +291,22 @@ function clearAllSelected() {
 function clickNonEleToClear(e) {
     if (isClick) { // 点击
         clearAllSelected();
+        if (e.target.nodeName === 'svg') {
+            return;
+        }
         var o = e.target.instance;
-        if (isSVGElementByClass(o)) {
+        if (isSVGElementByClass(o) || isSVGElementByClass(o.parent())) {
             //clearAllSelected();
-            if (e.target.nodeName === 'tspan') {
+            if (e.target.nodeName === 'tspan' || isGroupedEle(o)) {
                 o = o.parent();
-                limiteDragArea(o)
-                    .selectize()
-                    .addClass('selected')
-                    .resize();
-                deleteRectMousemove();
             }
-        } else if (isGroupedEle(o)) {
-
-            o = o.parent();
             limiteDragArea(o)
                 .selectize()
                 .addClass('selected')
                 .resize();
             deleteRectMousemove();
         }
-            } else { //拖动
-
     }
-
 }
 
 //拖放区域限制

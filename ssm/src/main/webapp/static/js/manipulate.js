@@ -14,7 +14,7 @@ $("#deleteEle").on("click", function () {
     var del = SVG.select('.selected');
     for (var i = 0; i < del.length(); i++) {
         var o = del.get(i);
-        if (isSvgElement(o.node.nodeName)) {
+        if (isSVGElementByClass(o)) {
             o.selectize(false)
                 .resize('stop');
 
@@ -33,7 +33,13 @@ function deleteFromBindPoint(o) {
     var clas = o.classes();
     for (var j = 0; j < clas.length; j++) {
         var cla = clas[j];
-        if (cla.indexOf('bindPoint') > -1) {
+        if (cla === 'grouparent') {
+            var children = o.children();
+            for (var i = 0; i < children.length(); i++) {
+                var child = children.get(i);
+                deleteFromBindPoint(child);
+            }
+        } else if (cla.indexOf('bindPoint') > -1) {
 
             // no else elements binded with same class with cla
             if (SVG.select("." + cla).length() === 1) {

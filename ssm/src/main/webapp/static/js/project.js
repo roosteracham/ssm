@@ -93,6 +93,7 @@ $(function () {
             desc += ' ' + type;
             var bp = 'bindPoint_' + pointName;
             selectedEle.addClass(bp);
+            selectedEle.addClass('bp');
             if (type === pointTypes.LIQUIDLEVEL) {
 
                 desc += ' ' + SVG.select('.selected').get(0).attr('height');
@@ -243,7 +244,7 @@ $('#importProject').on('click', function () {
 // 将导入的测点加入测点集合
 function addToBindPoints() {
     // 绑定测点的元素 $("[class^='class_']")
-    var eles = SVG.select('.ele');
+    var eles = SVG.select('.bp');
     for (var i = 0; i < eles.length(); i++) {
         var ele = eles.get(i);
 
