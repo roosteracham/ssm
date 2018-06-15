@@ -14,15 +14,29 @@ public class ProjectController {
     public String saveProject() {
         return "index";
     }
+    private String SVG;
 
     // 保存画面
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public @ResponseBody ResBody saveProject(@RequestBody SVGDto svg) {
         System.out.println(svg.getSvg());
+        SVG = svg.getSvg();
         ResBody body = new ResBody();
         body.setSuccess(true);
         body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
         body.setData("abc");
         return body;
+    }
+
+    @RequestMapping(value = "/import", method = RequestMethod.POST)
+    public @ResponseBody ResBody getProject(@RequestBody SVGDto svg) {
+        ResBody body = new ResBody();
+        body.setSuccess(true);
+        body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        body.setData(SVG);
+        return body;
+    }
+    public void save(SVGDto svgDto) {
+
     }
 }

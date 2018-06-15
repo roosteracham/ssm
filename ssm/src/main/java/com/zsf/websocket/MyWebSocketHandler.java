@@ -11,11 +11,25 @@ public class MyWebSocketHandler implements WebSocketHandler {
     //定义一个全局的初始化值count=0
     private static int i = 0;
 
-    private String receivedMessage;
     //建立连接后的操作
     public void afterConnectionEstablished(WebSocketSession session)
             throws Exception {
-        System.out.println("建立连接.. : " + receivedMessage);
+        System.out.println("已建立连接..");
+
+    }
+
+    //消息处理，在客户端通过Websocket API发送的消息会经过这里，然后进行相应的处理
+    public void handleMessage(WebSocketSession session,
+                              WebSocketMessage<?> message) throws Exception {
+        String receivedMessage = message.getPayload().toString();
+
+        System.out.println(receivedMessage);
+
+        // 如果请求关闭，则关闭连接
+        if ("close".equals(receivedMessage)) {
+            session.close();
+            return;
+        }
 
         String[] strings = receivedMessage.split(",");
         while (i < 10) {
@@ -43,13 +57,6 @@ public class MyWebSocketHandler implements WebSocketHandler {
         }
     }
 
-    //消息处理，在客户端通过Websocket API发送的消息会经过这里，然后进行相应的处理
-    public void handleMessage(WebSocketSession session,
-                              WebSocketMessage<?> message) throws Exception {
-        receivedMessage = message.getPayload().toString();
-        System.out.println(receivedMessage);
-    }
-
     //消息传输错误处理
     public void handleTransportError(WebSocketSession session,
                                      Throwable exception) throws Exception {
@@ -64,11 +71,5 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
     public boolean supportsPartialMessages() {
         return false;
-    }
-
-    public static void main(String[] args) {
-        StringBuilder stringBuilder = new StringBuilder("");
-        stringBuilder.append("'a' : ").append("'b'");
-        System.out.println(stringBuilder.toString());
     }
 }

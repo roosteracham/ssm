@@ -26,6 +26,14 @@
 	<script type="text/javascript" src="../js/svg.resize.js"></script>
 	<script type="text/javascript" src="../js/svg.path.js"></script>
 <script>
+	$(function () {
+        var person={"name": "xiaojiayu", "age": 24, "gender": "man"};
+        alert(JSON.stringify(person));
+        var c = 'name';
+        delete person[c];
+        alert(JSON.stringify(person));
+
+    });
     var draw = SVG('svgContainer').size(500, 330)
 
     var group = draw.group()

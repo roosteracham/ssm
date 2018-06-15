@@ -4,7 +4,7 @@
 
 // 清除工程元素
 $("#clearElements").on("click", function () {
-    if(svg !== null) {
+    if (svg !== null) {
         svg.clear();
     }
 });
@@ -12,15 +12,37 @@ $("#clearElements").on("click", function () {
 // 选中删除元素
 $("#deleteEle").on("click", function () {
     var del = SVG.select('.selected');
-    for (var i = 0;i < del.length(); i++) {
+    for (var i = 0; i < del.length(); i++) {
         var o = del.get(i);
         if (isSvgElement(o.node.nodeName)) {
             o.selectize(false)
                 .resize('stop');
-            o.node.remove();
+
+            // 如果没有其他关联相同测点的图形，则把测点从测点集合中删除
+            deleteFromBindPoint(o);
+
+            // 删除图形
+            o.remove();
         }
     }
+
 });
+
+// 从测点集合中删除测点
+function deleteFromBindPoint(o) {
+    var clas = o.classes();
+    for (var j = 0; j < clas.length; j++) {
+        var cla = clas[j];
+        if (cla.indexOf('bindPoint') > -1) {
+
+            // no else elements binded with same class with cla
+            if (SVG.select("." + cla).length() === 1) {
+
+                delete bindPoints[cla.substr(cla.length - 1)];
+            }
+        }
+    }
+}
 
 //组合元素
 $('#groupEle').on('click', function () {
@@ -45,12 +67,12 @@ $('#groupEle').on('click', function () {
 //旋转元素
 function rotate(arc) {
     var del = SVG.select('.selected');
-    for (var i = 0;i < del.length(); i++) {
+    for (var i = 0; i < del.length(); i++) {
         var o = del.get(i);
         if (isSvgElement(o.node.nodeName)) {
             o.transform({
-                rotation : arc, // 旋转角度
-                relative : true // 相对当前位置旋转
+                rotation: arc, // 旋转角度
+                relative: true // 相对当前位置旋转
             });
             limiteDragArea(o);
         }
@@ -176,10 +198,10 @@ var ws = null;
 
 // 测点类型
 var pointTypes = {
-    NUMBER : 'number',
-    LIQUIDLEVEL : 'liquidLevel',
-    SWITCH : 'switch'
-}
+    NUMBER: 'number',
+    LIQUIDLEVEL: 'liquidLevel',
+    SWITCH: 'switch'
+};
 
 // 运行
 $('#point').on('click', function () {
@@ -188,21 +210,22 @@ $('#point').on('click', function () {
     for (var key in bindPoints) {
         data += key + ',';
     }
-    if ("WebSocket" in window)
-    {
+    if ("WebSocket" in window) {
         console.log("您的浏览器支持 WebSocket!");
-    // 被选中的元素 $("[class^='class_']")
-    var eles = SVG.select("[class^='.bindPoint_']");
 
-    if (ws === null) {
-        var url = 'ws://localhost:8888/websocket';
-        ws = createNewWS(url);
-    }
+        // 绑定测点的元素 $("[class^='class_']")
+        //var eles = SVG.select("[class^='.bindPoint_']");
 
-       // ws.send("发送数据");
-        var ele = eles.get(0);
+        if (ws === null) {
+            var url = 'ws://localhost:8888/websocket';
+            ws = createNewWS(url);
+        }
+
+        // ws.send("发送数据");
+        //var ele = eles.get(0);
         //console.log(ele.data('pointName'), ele.data('type') , ele.data('value'))
         ws.onopen = function () {
+            // 发送所有测点
             ws.send(data);
             // Web Socket 已连接上，使用 send() 方法发送数据
             console.log("数据发送中...");
@@ -212,31 +235,27 @@ $('#point').on('click', function () {
             var received_msg = JSON.parse(evt.data);
             //ele.node.firstChild.textContent = received_msg;
 
-            // 依类型 更新
+            // 更新绑定该测点的所有图形
             for (var key in received_msg) {
+
+                // 测点数据
                 var d = received_msg[key];
+
+                // 选择绑定该测点的所有图形
                 var cla = '.bindPoint_' + key;
-                var ele = SVG.select(cla).get(0);
-                var type = bindPoints[key]['type'];
-                switch (type) {
-                    case pointTypes.NUMBER:
-                        updateNumber(ele, d);
-                        break;
-                    case pointTypes.LIQUIDLEVEL:
-                        UpdateLiquidLevel(ele, d);
-                        break;
-                    case pointTypes.SWITCH:
-                        updateSwitch(ele, d);
-                        break;
+                var eles = SVG.select(cla);
+
+                // 更新图形
+                for (var i = 0; i < eles.length(); i++) {
+                    var ele = eles.get(i);
+                    updateDataOnEle(ele, d);
                 }
             }
             // 更新图形
             console.log("数据已接收 : " + received_msg);
         };
 
-        ws.onclose = function() {
-            // 关闭 websocket
-            ws.close();
+        ws.onclose = function () {
             console.log("连接已关闭...");
         };
     } else {
@@ -246,38 +265,61 @@ $('#point').on('click', function () {
 });
 
 $('#stop').on('click', function () {
-if (ws !== null) {
-    try {
+    if (ws !== null) {
         ws.close();
-    } catch {
-        log('关闭时出错');
+        ws = null;
     }
-}
-    ws = null;
 });
 
+// 更新数据
+function updateDataOnEle(o, data) {
+    var descs = o.data('desc').split(' ');
+    var type = descs[1];
+    switch (type) {
+        case pointTypes.NUMBER:
+            updateNumber(o, data);
+            break;
+        case pointTypes.LIQUIDLEVEL:
+            UpdateLiquidLevel(o, data);
+            break;
+        case pointTypes.SWITCH:
+            updateSwitch(o, data);
+            break;
+    }
+}
 // 更新数字
 function updateNumber(o, data) {
     if (o.node.nodeName === 'text') {
-        o.node.firstChild.textContent = data;
+        updateText(o, data);
     }
 }
 
-//更新液位
+// 更新液位
 function UpdateLiquidLevel(o, data) {
+    updateRect(o, data);
+}
+
+// 文本变化
+function updateText(o, data) {
+    o.node.firstChild.textContent = data;
+}
+
+// 矩形变化
+function updateRect(o, data) {
     var s = o.data('desc').split(' ');
-    var desc = s[0];
-    var height = s[1];
-    if (o.node.nodeName === 'rect') {
-        o.attr('height', data / desc * height);
-    }
+    var desc = s[0]; // 最大值
+    var maxHeight = s[2]; // 最大高度
+    var nHeight = o.attr('height'); // 当前高度
+    var height = data / desc * maxHeight;
+    o.attr('height', height);
+    o.dy(nHeight - height);
 }
 
 // 更新开关
 function updateSwitch(o, data) {
 
-    var desc = o.data('desc');
-    if (data < desc) {
+    var thresh = o.data('desc').split(' ')[0];
+    if (data < thresh) {
         o.fill('green');
     } else {
         o.fill('red');

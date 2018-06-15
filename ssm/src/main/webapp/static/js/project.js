@@ -11,6 +11,11 @@ var eventTarget = {
 
 $(function () {
 
+    $('#myModal #myBindPointModal').modal({
+        backdrop : false,
+        keyboard : false
+    });
+
     // 模态框弹出前执行
     $('#myModal').on('show.bs.modal', function () {
 
@@ -85,6 +90,7 @@ $(function () {
             };*/
 
             // 绑定测点
+            desc += ' ' + type;
             var bp = 'bindPoint_' + pointName;
             selectedEle.addClass(bp);
             if (type === pointTypes.LIQUIDLEVEL) {
@@ -94,9 +100,7 @@ $(function () {
             selectedEle.data('desc', desc, true);
 
             // 加入到测点集合
-            bindPoints[pointName] = {
-                "type" : type
-            };
+            bindPoints[pointName] = pointName;
 
             // 关闭模态框
             $('#myBindPointModal').modal('hide');
@@ -123,9 +127,11 @@ $(function () {
                 break;
             case pointTypes.LIQUIDLEVEL :
                 $('#pointDescLabel')['0'].innerText = '量程';
+                $('#pointDesc').val('');
                 break;
             case pointTypes.SWITCH :
                 $('#pointDescLabel')['0'].innerText = '阈值';
+                $('#pointDesc').val('');
                 break;
         }
     });
@@ -175,6 +181,8 @@ $("#deletesvg").on("click", function () {
     svg.clear();
     svg = null;
     $("#svgContainer svg").remove();
+    svgName = null;
+    bindPoints = {};
 });
 
 // 保存工程 提交给服务器
@@ -189,25 +197,66 @@ $('#exportProject').on('click', function () {
     var data = {
         "projectName" : projectName,
         "svgName" : svgName,
-        "svg" : svg.svg()
+        "svg" : getAllEles()
     };
 
     // 上传到服务器
     ajaxOption(urls.exportProject, 'post', data);
-    //ajaxPost(urls.exportProject, data);
-    //console.log(data)
 });
+
+// 获得所有图形
+function getAllEles() {
+    var eles = SVG.select('.ele');
+    var o = '';
+    for (var i = 0; i < eles.length(); i++) {
+        var ele = eles.get(i);
+        o += ele.svg();
+    }
+    return o;
+}
 
 // 导入工程， 向服务器请求
 $('#importProject').on('click', function () {
-    if (svg !== null) {
+    if (projectName !== null) {
+        var data = {
+            "projectName" : projectName,
+            "svgName" : svgName,
+            "svg" : getAllEles()
+        };
+        $.ajaxSetup({contentType : 'application/json; charset=utf-8'});
+        $.post(urls.importProject, JSON.stringify(data), function (res) {
 
-        svg.svg('<rect width="100" height="50" fill="#f06"></rect>' +
-            '<rect width="100" height="50" fill="#f06" x="100"></rect>');
+            if (svg === null) {
+                newSVG();
+                svgName = 'default';
+            }
+            svg.svg(res['data']);
+            
+            // 将导入的测点加入测点集合
+            addToBindPoints();
+        });
     } else {
         alert('工程未建立，无法导入');
     }
 });
+
+// 将导入的测点加入测点集合
+function addToBindPoints() {
+    // 绑定测点的元素 $("[class^='class_']")
+    var eles = SVG.select('.ele');
+    for (var i = 0; i < eles.length(); i++) {
+        var ele = eles.get(i);
+
+        var clas = ele.classes();
+        for (var j = 0; j < clas.length; j++) {
+            var cla = clas[j];
+            if (cla.indexOf('bindPoint') > -1) {
+                var pointName = cla.substr(cla.length - 1);
+                bindPoints[pointName] = pointName;
+            }
+        }
+    }
+}
 
 // 导出SVG
 $('#exportSVG').on('click', function () {
