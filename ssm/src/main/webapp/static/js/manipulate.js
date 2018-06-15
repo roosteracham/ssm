@@ -35,9 +35,11 @@ function deleteFromBindPoint(o) {
         var cla = clas[j];
         if (cla === 'grouparent') {
             var children = o.children();
-            for (var i = 0; i < children.length(); i++) {
-                var child = children.get(i);
-                deleteFromBindPoint(child);
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
+                if (child.hasClass('bp')) {
+                    deleteFromBindPoint(child);
+                }
             }
         } else if (cla.indexOf('bindPoint') > -1) {
 
