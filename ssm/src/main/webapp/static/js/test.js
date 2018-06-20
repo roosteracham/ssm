@@ -47,7 +47,10 @@ function isSvgElement(name) {
 
 // 依据class 判断是否是图形元素
 function isSVGElementByClass(o) {
-    return hasClass(o, 'ele');
+    if (typeof(o) === 'undefined') {
+        return false;
+    }
+    return hasClass(o.classes(), 'ele');
 }
 
 // 是否是组合的元素
@@ -55,11 +58,13 @@ function isGroupedEle(o) {
    return o.hasClass('groupEle');
 }
 
-// 是否具有某个class， 有则返回true
-function hasClass(o, cla) {
+function isNodeGroupedEle(node) {
+    var clas = node.classList;
+    return hasClass(clas, 'groupEle');
+}
 
-    // 获得所有的class
-    var clas = o.classes();
+// 是否具有某个class， 有则返回true
+function hasClass(clas, cla) {
 
     for (var i = 0; i < clas.length; i++) {
 
@@ -129,8 +134,8 @@ function mousedownOnNonEle(e) {
            .move(beginX, beginY)
     } else { // 若点击在图形元素上，则判断是否被选中，未被选中清除其他元素被选中的状态
         var o;
-        if (e.target.nodeName === 'tspan' || isGroupedEle(e.target.instance)) {
-            o = e.target.instance.parent();
+        if (e.target.nodeName === 'tspan' || isNodeGroupedEle(e.target)) {
+            o = e.target.parentNode.instance;
         } else {
             o = e.target.instance;
         }
@@ -205,8 +210,8 @@ function mouseupOnSVG(e) {
 
     if (isSvgElement(e.target.nodeName) && clearOthers) {
         var o = e.target.instance;
-        if (e.target.nodeName === 'tspan' || isGroupedEle(o)) {
-            o = e.target.instance.parent();
+        if (e.target.nodeName === 'tspan' || isNodeGroupedEle(e.target)) {
+            o = e.target.parentNode.instance;
         }
         selectClicked(o);
     } else {
@@ -295,10 +300,10 @@ function clickNonEleToClear(e) {
             return;
         }
         var o = e.target.instance;
-        if (isSVGElementByClass(o) || isSVGElementByClass(o.parent())) {
+        if (isSVGElementByClass(o) || isSVGElementByClass(e.target.parentNode.instance)) {
             //clearAllSelected();
-            if (e.target.nodeName === 'tspan' || isGroupedEle(o)) {
-                o = o.parent();
+            if (e.target.nodeName === 'tspan' || isNodeGroupedEle(e.target)) {
+                o = e.target.parentNode.instance;
             }
             limiteDragArea(o)
                 .selectize()

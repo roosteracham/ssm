@@ -182,3 +182,12 @@ $('#light').on('click', function () {
         });
     myResize(light);
 });
+
+$('#pump').on('click', function () {
+   if (svg === null) {
+       return;
+   }
+
+   var pump = '<g id="SvgjsG12095" class="grouparent ele" x="100" y="100" transform="matrix(1,0,0,1,124,4)"><rect id="SvgjsRect9715" width="47" height="23" fill="#9a98ab" x="244" y="305" class="groupEle"></rect><circle id="SvgjsCircle8799" r="30.25" cx="249.25" cy="335.25" fill="#9a98ab" class="groupEle"></circle><rect id="SvgjsRect10606" width="13" height="32" fill="#9a98ab" x="285" y="301" class="groupEle"></rect></g>';
+   svg.svg(pump);
+});

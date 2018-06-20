@@ -25,14 +25,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
         System.out.println(receivedMessage);
 
-        // 如果请求关闭，则关闭连接
-        if ("close".equals(receivedMessage)) {
-            session.close();
-            return;
-        }
-
         String[] strings = receivedMessage.split(",");
-        while (i < 10) {
+        while (!"close".equals(receivedMessage)) {
 
             StringBuilder stringBuilder = new StringBuilder("{");
 
@@ -50,9 +44,6 @@ public class MyWebSocketHandler implements WebSocketHandler {
             stringBuilder.append("}");
 
             session.sendMessage(new TextMessage(stringBuilder.toString()));
-            if (i == 9) {
-                i = 0;
-            }
             Thread.sleep(1000);
         }
     }

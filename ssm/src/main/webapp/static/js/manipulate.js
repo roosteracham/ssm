@@ -269,6 +269,7 @@ $('#point').on('click', function () {
         };
 
         ws.onclose = function () {
+            ws.close();
             console.log("连接已关闭...");
         };
     } else {
@@ -331,10 +332,40 @@ function updateRect(o, data) {
 // 更新开关
 function updateSwitch(o, data) {
 
-    var thresh = o.data('desc').split(' ')[0];
-    if (data < thresh) {
+    var thresh = parseInt(o.data('desc').split(' ')[0]);
+    if (parseInt(data) < thresh) {
         o.fill('green');
     } else {
         o.fill('red');
     }
 }
+
+$('#copyEle').on('click', function () {
+   if (svg === null) {
+       return;
+   }
+
+   var eles = SVG.select('.selected');
+   for (var i = 0; i < eles.length(); i++) {
+       var ele = eles.get(i);
+       var x = ele.x();
+       var y = ele.y();
+       var  temp = ele.clone();
+       temp.move(100, 100);
+       ele.selectize(false);
+   }
+});
+
+$('#modifyText').on('click', function () {
+
+    if (svg === null) {
+        return;
+    }
+
+    var eles = SVG.select('.selected');
+    if (eles.length() === 1) {
+        $('#myModalLabel')[0].innerHeight = '修稿文本';
+        id = 'modifyText';
+        $('#myModal').modal('show');
+    }
+})

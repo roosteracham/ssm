@@ -6,7 +6,8 @@
 var eventTarget = {
     newProject : 'newProject',
     newSvg : 'newSvg',
-    bindPoint : 'bindPoint'
+    bindPoint : 'bindPoint',
+    modifyText : 'modifyText'
 };
 
 $(function () {
@@ -30,6 +31,9 @@ $(function () {
                 break;
             case eventTarget.newSvg : // 新建画面
                 val = '工程画面';
+                break;
+            case eventTarget.modifyText : // 新建画面
+                val = SVG.select('.selected').get(0).node.firstChild.innerHTML;
                 break;
         }
 
@@ -69,13 +73,30 @@ $(function () {
             } else if (id === 'newSvg') { // 新建画面
                     svgName = name;
                     newSVG();
+            } else if (id === 'modifyText') {
+                SVG.select('.selected').get(0).node.firstChild.innerHTML = name;
             }
         }
         isConfirmNew = false;
     });
 
     // 绑定测点
-    $('#myBindPointModal').on('click', function () {
+    $('#myBindPointModal').on('click', function (e) {
+
+        // 删除旧测点
+        var clas = selectedEle.classes();
+        for (var i = 0; i < clas.length; i++) {
+            var cla = clas[i];
+            if (cla.indexOf('bind') > -1) {
+                selectedEle.removeClass(cla);
+                selectedEle.removeClass('bp');
+            }
+            // no else elements binded with same class with cla
+            if (SVG.select("." + cla).length() === 0) {
+
+                delete bindPoints[cla.substr(cla.length - 1)];
+            }
+        }
         var type = $('#pointType').val();
         var pointName = $('#pointName').val();
         var desc = $('#pointDesc').val();

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import test.junit.BaseJunitTest;
 
+import javax.servlet.http.HttpSession;
+
 public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
 
     @Autowired
@@ -34,5 +36,10 @@ public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
     @Test
     public void redisTest() {
         System.out.println(redisTemplate.opsForValue().get("sb"));;
+    }
+
+    @Test
+    public void pathTest() {
+        System.out.println();
     }
 }
