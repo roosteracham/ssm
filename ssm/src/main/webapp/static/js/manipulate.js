@@ -65,7 +65,7 @@ $('#groupEle').on('click', function () {
             var ele = eles.get(i);
             ele.draggable(false)
                 .selectize(false)
-                .resize('stop')
+                //.resize('stop')
                 .addClass('groupEle')
                 .removeClass('ele')
                 .removeClass('selected');

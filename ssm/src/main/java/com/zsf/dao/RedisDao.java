@@ -20,4 +20,9 @@ public class RedisDao {
         String key = svgDto.getProjectName() + "_" + svgDto.getSvgName();
         return (String)redisTemplate.opsForValue().get(key);
     }
+
+    public void delete(SVGDto svgDto) {
+        String key = svgDto.getProjectName() + "_" + svgDto.getSvgName();
+        redisTemplate.delete(key);
+    }
 }

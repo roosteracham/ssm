@@ -18,7 +18,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
+  <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -72,5 +72,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.slf4j:jcl-over-slf4j:1.7.21" level="project" />
     <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP-java6:2.3.13" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.6.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
   </component>
 </module>

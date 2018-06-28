@@ -26,6 +26,7 @@ public class ProjectController {
     public @ResponseBody ResBody saveProject(@RequestBody SVGDto svg) {
         System.out.println(svg.getSvg());
         //SVG = svg.getSvg();
+        redisService.delete(svg);
         redisService.set(svg);
         ResBody body = new ResBody();
         body.setSuccess(true);

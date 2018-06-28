@@ -19,4 +19,8 @@ public class RedisServiceImpl implements RedisService {
     public String getValue(SVGDto svgDto) {
         return redisDao.getVlaue(svgDto);
     }
+
+    public void delete(SVGDto svgDto) {
+        redisDao.delete(svgDto);
+    }
 }

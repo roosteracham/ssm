@@ -6,4 +6,6 @@ public interface RedisService {
     void set(SVGDto svgDto);
 
     String getValue(SVGDto svgDto);
+
+    void delete(SVGDto svgDto);
 }

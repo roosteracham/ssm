@@ -37,6 +37,7 @@ $(function () {
                 break;
         }
 
+        // 重新添加输入框
         var child = $("<input>", {
             type:'text',
             val : val,
@@ -273,7 +274,8 @@ function addToBindPoints() {
         for (var j = 0; j < clas.length; j++) {
             var cla = clas[j];
             if (cla.indexOf('bindPoint') > -1) {
-                var pointName = cla.substr(cla.length - 1);
+                var index = cla.indexOf('_');
+                var pointName = cla.substr(index + 1);
                 bindPoints[pointName] = pointName;
             }
         }
