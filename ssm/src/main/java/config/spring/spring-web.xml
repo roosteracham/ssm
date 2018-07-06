@@ -31,10 +31,29 @@
     <mvc:resources mapping="/css/**" location="/static/css/"/>
     <mvc:resources mapping="/images/**" location="/static/images/"/>
     <!-- 3.配置jsp 显示ViewResolver -->
+
+    <!-- html视图解析器 -->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath">
+            <value>/static/html</value>
+        </property>
+    </bean>
+
+    <bean id="htmlviewResolver"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="suffix" value=".html" />
+        <property name="order" value="0"></property>
+        <property name="contentType" value="text/html;charset=UTF-8"></property>
+    </bean>
+
+    <!-- jsp视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"><!--
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />-->
         <property name="prefix" value="/WEB-INF/jsp/" />
         <property name="suffix" value=".jsp" />
+        <property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/> <!-- 不能用jstl的那个 -->
+        <property name="contentType" value="text/html;charset=UTF-8"/>
+        <property name="order" value="0"></property>
     </bean>
 
     <!-- 4.扫描web相关的bean -->

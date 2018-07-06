@@ -21,4 +21,9 @@ public class C1 {
         System.out.println(user.getName() + " : " + user.getPass());
         return  null;
     }
+
+    @RequestMapping("/a")
+    public String a() {
+        return "a";
+    }
 }
