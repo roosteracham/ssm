@@ -9,7 +9,7 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd
 	http://www.springframework.org/schema/mvc
-	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
     http://www.springframework.org/schema/websocket
     http://www.springframework.org/schema/websocket/spring-websocket.xsd">
     <!-- 配置SpringMVC -->
@@ -70,4 +70,17 @@
             <bean class="com.zsf.websocket.HandshakeInterceptor"/>
         </websocket:handshake-interceptors>
     </websocket:handlers>
+
+    <!-- 跨域 -->
+    <!--<mvc:cors>
+
+        <mvc:mapping path="/c1/**"
+                     allowed-origins="http://localhost:3000"
+                     allowed-methods="GET, PUT,POST"
+                      />
+&lt;!&ndash;
+        <mvc:mapping path="/resources/**"
+                     allowed-origins="http://domain1.com" />&ndash;&gt;
+
+    </mvc:cors>-->
 </beans>

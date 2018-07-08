@@ -1,11 +1,13 @@
 package com.zsf.controller;
 
+import com.zsf.domain.ResultBean;
 import com.zsf.domain.User;
 import com.zsf.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 @Controller
@@ -25,5 +27,19 @@ public class C1 {
     @RequestMapping("/a")
     public String a() {
         return "a";
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/test-cross", method = RequestMethod.POST)
+    public @ResponseBody ResultBean test(HttpServletResponse response) {
+        System.out.println("request received.");
+        //response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        return new ResultBean("returned meaasge id : " + (int)(Math.random() * 100));
+    }
+
+    @RequestMapping(value = "/test1", method = RequestMethod.GET)
+    public ResultBean test1() {
+        System.out.println("request received.");
+        return new ResultBean("returned meaasge id : " + (int)(Math.random() * 100));
     }
 }
