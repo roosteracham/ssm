@@ -62,9 +62,9 @@
     <!-- websocket -->
     <bean id="websocket" class="com.zsf.websocket.WebsocketEndPoint"/>
 
-    <bean id="websocket1" class="com.zsf.websocket.MyWebSocketHandler"/>
+    <bean id="websocket1" class="com.zsf.websocket.MyWebSocketHandler" />
 
-    <websocket:handlers>
+    <websocket:handlers allowed-origins="http://localhost:3000">
         <websocket:mapping path="/websocket" handler="websocket1"/>
         <websocket:handshake-interceptors>
             <bean class="com.zsf.websocket.HandshakeInterceptor"/>

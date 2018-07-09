@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
@@ -43,7 +44,18 @@ public class ProjectController {
         body.setData(redisService.getValue(svg));
         return body;
     }
-    public void save(SVGDto svgDto) {
 
+    public static void main(String[] args) {
+            test();
+        System.out.println("after Exception");
+    }
+
+    static void test() {
+
+        try {
+            int a = 1 / 0;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }
