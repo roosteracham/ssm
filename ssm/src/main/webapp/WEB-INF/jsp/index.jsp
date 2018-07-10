@@ -88,7 +88,9 @@
 <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="../../static/css/svg.select.css"/>
 <link rel="stylesheet" type="text/css" href="../../static/css/test.css"/>
+
 <script type="text/javascript" src="../../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../static/js/vue.js"></script>
 <script type="text/javascript" src="../../static/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../../static/js/svg.js"></script>
 <script type="text/javascript" src="../../static/js/svg.draggable.js"></script>

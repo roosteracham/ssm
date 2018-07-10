@@ -7,7 +7,7 @@
 	http://www.springframework.org/schema/context/spring-context.xsd">
     <!-- 配置整合mybatis过程 -->
     <!-- 1.配置数据库相关参数properties的属性：${url} -->
-    <context:property-placeholder location="classpath:resources/*.properties" />
+    <context:property-placeholder location="classpath:config/properties/*.properties" />
 
     <!-- 2.数据库连接池 -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -33,11 +33,11 @@
         <!-- 注入数据库连接池 -->
         <property name="dataSource" ref="dataSource" />
         <!-- 配置MyBaties全局配置文件:mybatis-config.xml -->
-        <property name="configLocation" value="classpath:resources/mybatis-config.xml" />
+        <property name="configLocation" value="classpath:config/properties/mybatis-config.xml" />
         <!-- 扫描entity包 使用别名 -->
         <property name="typeAliasesPackage" value="com.zsf.domain" />
         <!-- 扫描sql配置文件:mapper需要的xml文件 -->
-        <property name="mapperLocations" value="classpath:resources/mybatis/mapping/*.xml" />
+        <property name="mapperLocations" value="classpath:config/mybatis/mapping/*.xml" />
     </bean>
 
     <!-- 4.配置扫描Dao接口包，动态实现Dao接口，注入到spring容器中 -->

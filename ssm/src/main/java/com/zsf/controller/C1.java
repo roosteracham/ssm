@@ -29,7 +29,7 @@ public class C1 {
         return "a";
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(value = "/test-cross", method = RequestMethod.POST)
     public @ResponseBody ResultBean test(HttpServletResponse response) {
         System.out.println("request received.");
