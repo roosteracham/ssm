@@ -8,6 +8,8 @@ public class SVGDto {
 
     private String svgName;
 
+    private int index;
+
     public String getProjectName() {
         return projectName;
     }
@@ -30,5 +32,13 @@ public class SVGDto {
 
     public void setSvg(String svg) {
         this.svg = svg;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

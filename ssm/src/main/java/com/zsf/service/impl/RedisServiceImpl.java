@@ -1,26 +1,34 @@
 package com.zsf.service.impl;
 
-import com.zsf.dao.RedisDao;
-import com.zsf.domain.SVGDto;
+import com.zsf.domain.*;
 import com.zsf.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RedisServiceImpl implements RedisService {
 
     @Autowired
-    private RedisDao redisDao;
+    private RedisTemplate redisTemplate;
 
-    public void set(SVGDto svgDto) {
-        redisDao.insert(svgDto);
+    @Override
+    public void set(String key, String value) {
+        redisTemplate.opsForValue().set(key, value);
     }
 
-    public String getValue(SVGDto svgDto) {
-        return redisDao.getVlaue(svgDto);
+    @Override
+    public void saveGroupedElement(GroupedElement groupedElement) {
+        redisTemplate.opsForValue().set(groupedElement.getGroupName(),
+                groupedElement.getData());
     }
 
-    public void delete(SVGDto svgDto) {
-        redisDao.delete(svgDto);
+    public String getValue(String key) {
+        return (String)redisTemplate.opsForValue().get(key);
+    }
+
+    @Override
+    public void delete(String key) {
+        redisTemplate.delete(key);
     }
 }

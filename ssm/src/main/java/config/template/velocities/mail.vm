@@ -1,0 +1,10 @@
+<html>
+<body>
+<h3>Hi ${user.id}, welcome to the Chipping Sodbury On-the-Hill message boards!</h3>
+
+<div>
+    Your email name is <a href="mailto:${user.name}">${user.name}</a>.
+    点击连接 ： <a href="${user.pass}" >${user.pass}</a>
+</div>
+</body>
+</html>
