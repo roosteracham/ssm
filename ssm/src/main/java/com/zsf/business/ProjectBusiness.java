@@ -3,6 +3,7 @@ package com.zsf.business;
 import com.zsf.domain.*;
 import com.zsf.service.IProjectService;
 import com.zsf.service.ISvgService;
+import com.zsf.service.RedisService;
 import com.zsf.util.errorcode.ErrorCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ public class ProjectBusiness {
 
     @Autowired
     private ISvgService svgService;
+
+    @Autowired
+    private RedisService redisService;
 
     public int addProject(ProjectDto projectDto) {
         ProjectInfo project = projectService.select(projectDto.getId());
@@ -70,10 +74,7 @@ public class ProjectBusiness {
 
         if (project == null) {
             projectService.insert(projectInfo);
-        } /*else {
-            projectInfo.setId(project.getId());
-            projectService.update(projectInfo);
-        }*/
+        }
 
         // 更新画面
         SvgInfo svgInfo = new SvgInfo();
@@ -85,10 +86,7 @@ public class ProjectBusiness {
 
         if (svg == null) {
             svgService.insert(svgInfo);
-        } /*else {
-            svgInfo.setId(svg.getId());
-            svgService.update(svgInfo);
-        }*/
+        }
 
         ResBody body = new ResBody();
         body.setSuccess(true);

@@ -18,4 +18,6 @@ public interface ISvgService {
     SvgInfo selectBySvgId(int svgIndex);
 
     List<SvgInfo> selectAllSvgs();
+
+    SvgInfo selectByProjectId(Integer projectId);
 }

@@ -36,6 +36,11 @@ public class SvgServiceImpl implements ISvgService {
     }
 
     @Override
+    public SvgInfo selectByProjectId(Integer projectId) {
+        return svgInfoMapper.selectByProjectId(projectId);
+    }
+
+    @Override
     public SvgInfo selectBySvgId(int svgId) {
         return svgInfoMapper.selectBySvgId(svgId);
     }

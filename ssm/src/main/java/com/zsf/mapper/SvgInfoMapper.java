@@ -20,4 +20,6 @@ public interface SvgInfoMapper {
     List<SvgInfo> selectAllSvg();
 
     SvgInfo selectBySvgId(int svgId);
+
+    SvgInfo selectByProjectId(Integer projectId);
 }
