@@ -18,9 +18,14 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void saveGroupedElement(GroupedElement groupedElement) {
-        redisTemplate.opsForValue().set(groupedElement.getGroupName(),
-                groupedElement.getData());
+    public String getGroup(String key) {
+        return (String) redisTemplate.opsForValue().get(key);
+    }
+
+    @Override
+    public void saveGroupedElement(String key, String data) {
+        redisTemplate.opsForValue().set(key,
+                data);
     }
 
     public String getValue(String key) {

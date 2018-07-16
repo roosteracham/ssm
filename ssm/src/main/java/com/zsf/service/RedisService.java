@@ -9,5 +9,7 @@ public interface RedisService {
 
     void delete(String svgDto);
 
-    void saveGroupedElement(GroupedElement groupedElement);
+    void saveGroupedElement(String key, String data);
+
+    String getGroup(String key);
 }

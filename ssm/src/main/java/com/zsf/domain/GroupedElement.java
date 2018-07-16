@@ -6,6 +6,16 @@ public class GroupedElement {
 
     private String data;
 
+    private Integer index;
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
+    }
+
     public String getGroupName() {
         return groupName;
     }

@@ -19,11 +19,6 @@ public class ProjectController {
     @Autowired
     private ProjectBusiness projectBusiness;
 
-    @RequestMapping(value = "/index")
-    public String saveProject() {
-        return "index";
-    }
-
     /**
      *  保存画面接口
      * @param svg
@@ -51,9 +46,18 @@ public class ProjectController {
      */
     @RequestMapping(value = "/saveGroup", method = RequestMethod.POST)
     public @ResponseBody ResBody saveGroup(@RequestBody GroupedElement group) {
-        return redisBusiness.saveGroupedElement(group);
+        return projectBusiness.saveGroupedElement(group);
     }
 
+    /**
+     *  保存组合元素接口
+     * @param group
+     * @return
+     */
+    @RequestMapping(value = "/getGroup", method = RequestMethod.POST)
+    public @ResponseBody ResBody getGroup(@RequestBody GroupedElement group) {
+        return redisBusiness.getGroupedElement(group);
+    }
     /**
      *  获得集合接口
      * @param
@@ -75,16 +79,6 @@ public class ProjectController {
     }
 
     public static void main(String[] args) {
-            test();
-        System.out.println("after Exception");
-    }
-
-    static void test() {
-
-        try {
-            int a = 1 / 0;
-        } catch (Exception e) {
-            throw e;
-        }
+        System.out.println("阿瑟东");
     }
 }

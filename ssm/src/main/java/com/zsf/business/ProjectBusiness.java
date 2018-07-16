@@ -1,6 +1,7 @@
 package com.zsf.business;
 
 import com.zsf.domain.*;
+import com.zsf.service.IComponentService;
 import com.zsf.service.IProjectService;
 import com.zsf.service.ISvgService;
 import com.zsf.service.RedisService;
@@ -18,6 +19,9 @@ public class ProjectBusiness {
 
     @Autowired
     private ISvgService svgService;
+
+    @Autowired
+    private IComponentService componentService;
 
     @Autowired
     private RedisService redisService;
@@ -101,11 +105,16 @@ public class ProjectBusiness {
 
         List<SvgInfo> svgInfos = svgService.selectAllSvgs();
 
+        List<ComponentInfo> componentInfos = componentService.getAllComponents();
+
         StringBuilder stringBuilder = new StringBuilder("");
         stringBuilder.append("{");
-        if (svgInfos.size() != 0 || projectInfos.size() != 0) {
-            svgsToString(svgInfos, stringBuilder);
-            projectsToString(projectInfos, stringBuilder);
+        if (svgInfos.size() != 0 || projectInfos.size() != 0
+                || componentInfos.size() != 0) {
+            svgsToString(svgInfos, stringBuilder,
+                    projectInfos.size() != 0 && componentInfos.size() != 0);
+            projectsToString(projectInfos, componentInfos.size(), stringBuilder);
+            componentsToString(componentInfos, stringBuilder);
         }
         stringBuilder.append("}");
 
@@ -116,7 +125,24 @@ public class ProjectBusiness {
         return body;
     }
 
-    private void svgsToString(List<SvgInfo> svgInfos, StringBuilder stringBuilder) {
+    private void componentsToString(List<ComponentInfo> componentInfos,
+                                    StringBuilder stringBuilder) {
+        if (componentInfos == null || componentInfos.size() <= 0)
+            return;
+        stringBuilder.append("\"4\":[");
+        for (int i = 0; i < componentInfos.size(); i++) {
+            ComponentInfo componentInfo = componentInfos.get(i);
+            stringBuilder.append("\"")
+                    .append(componentInfo.getName())
+                    .append("\"");
+            if (i != componentInfos.size() - 1) {
+                stringBuilder.append(",");
+            }
+        }
+        stringBuilder.append("]");
+    }
+
+    private void svgsToString(List<SvgInfo> svgInfos, StringBuilder stringBuilder, boolean append) {
 
         if (svgInfos == null || svgInfos.size() <= 0)
             return;
@@ -138,10 +164,13 @@ public class ProjectBusiness {
                 stringBuilder.append(",");
             }
         }
-        stringBuilder.append("],");
+        stringBuilder.append("]");
+        if (append) {
+            stringBuilder.append(",");
+        }
     }
 
-    private void projectsToString(List<ProjectInfo> projectInfos,
+    private void projectsToString(List<ProjectInfo> projectInfos, int size,
                                   StringBuilder stringBuilder) {
 
         if (projectInfos == null || projectInfos.size() <= 0)
@@ -159,5 +188,31 @@ public class ProjectBusiness {
             }
         }
         stringBuilder.append("]");
+        if (size > 0) {
+            stringBuilder.append(",");
+        }
+    }
+
+    public ResBody saveGroupedElement(GroupedElement group) {
+
+        ComponentInfo componentInfo =
+                componentService.getComponentByName(group.getGroupName());
+
+        // 更新数据库记录
+        if (componentInfo == null) {
+            componentInfo = new ComponentInfo();
+            componentInfo.setName(group.getGroupName());
+            componentService.insert(componentInfo);
+        }
+
+        // 画面存入redis
+        String key = "group_" + group.getGroupName();
+        redisService.saveGroupedElement(key, group.getData());
+
+        ResBody body = new ResBody();
+        body.setSuccess(true);
+        body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        body.setData("");
+        return body;
     }
 }
