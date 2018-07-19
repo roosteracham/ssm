@@ -30,7 +30,7 @@
     <mvc:resources mapping="/js/**" location="/static/js/"/>
     <mvc:resources mapping="/css/**" location="/static/css/"/>
     <mvc:resources mapping="/images/**" location="/static/images/"/>
-    <!-- 3.配置jsp 显示ViewResolver -->
+
 
     <!-- html视图解析器 -->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
@@ -63,7 +63,6 @@
     <bean id="websocket" class="com.zsf.websocket.WebsocketEndPoint"/>
 
     <bean id="websocket1" class="com.zsf.websocket.MyWebSocketHandler" />
-
     <websocket:handlers allowed-origins="http://localhost:3000">
         <websocket:mapping path="/websocket" handler="websocket1"/>
         <websocket:handshake-interceptors>

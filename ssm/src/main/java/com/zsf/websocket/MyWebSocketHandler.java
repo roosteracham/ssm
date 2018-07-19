@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +21,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
     private static final ScheduledExecutorService executorService =
             Executors.newSingleThreadScheduledExecutor();
 
-    private String receivedMessage;
+    // 可对300个测点值更新
+    private List<String> points = new ArrayList<>(300);
 
 
     //建立连接后的操作
@@ -28,29 +31,28 @@ public class MyWebSocketHandler implements WebSocketHandler {
         logger.info("已建立连接..");
 
         executorService.scheduleWithFixedDelay(() -> {
-            String[] strings;
-            synchronized (receivedMessage) {
-                strings = receivedMessage.split(",");
-            }
 
             StringBuilder stringBuilder = new StringBuilder("{");
 
-            for (int j = 0; j < strings.length; j++) {
-                stringBuilder.append("\"")
-                        .append(strings[j])
-                        .append("\":\"")
-                        .append((int)(Math.random() * 50));
-                if (j == strings.length - 1) {
-                    stringBuilder.append("\"");
-                } else {
-                    stringBuilder.append("\",");
+            synchronized (points) {
+                for (int j = 0; j < points.size(); j++) {
+                    stringBuilder.append("\"")
+                            .append(points.get(j))
+                            .append("\":\"")
+                            .append((int) (Math.random() * 50));
+                    if (j == points.size() - 1) {
+                        stringBuilder.append("\"");
+                    } else {
+                        stringBuilder.append("\",");
+                    }
                 }
             }
             stringBuilder.append("}");
 
+
             try {
                 session.sendMessage(new TextMessage(stringBuilder.toString()));
-            }catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }, 1, 1, TimeUnit.SECONDS);
@@ -59,14 +61,19 @@ public class MyWebSocketHandler implements WebSocketHandler {
     //消息处理，在客户端通过Websocket API发送的消息会经过这里，然后进行相应的处理
     public void handleMessage(WebSocketSession session,
                               WebSocketMessage<?> message) throws Exception {
-        synchronized (receivedMessage) {
-            receivedMessage = message.getPayload().toString();
+        String receivedMessage = message.getPayload().toString();
+        String[] newPoints = receivedMessage.split(",");
+        for (int i = 0; i < newPoints.length; i++) {
+
+            synchronized (points) {
+                if (points.size() > 300) {
+                    points.remove(0);
+                }
+                if (!points.contains(newPoints[i]) && newPoints[i] != "")
+                    points.add(newPoints[i]);
+            }
         }
         logger.info("receivedMessage : " + receivedMessage);
-    }
-
-    private void sendMessages(WebSocketSession session, String receivedMessage) {
-
     }
 
     //消息传输错误处理
@@ -78,7 +85,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
     //连接关闭后的操作
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus closeStatus) throws Exception {
-       logger.info("连接关闭后的操作..");
+        logger.info("连接关闭后的操作..");
     }
 
     public boolean supportsPartialMessages() {
@@ -99,7 +106,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
         }, 1, 1, TimeUnit.SECONDS);
         try {
             Thread.sleep(3000);
-        }catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
 
