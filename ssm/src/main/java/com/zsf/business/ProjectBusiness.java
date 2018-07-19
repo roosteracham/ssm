@@ -67,7 +67,7 @@ public class ProjectBusiness {
         return projectService.selectAllProjects();
     }
 
-    public ResBody addProjectToColletion(ProjectDto projectDto) {
+    public ResBody addProjectToCollection(ProjectDto projectDto) {
 
         // 更新工程
         ProjectInfo projectInfo = new ProjectInfo();
@@ -99,7 +99,7 @@ public class ProjectBusiness {
         return body;
     }
 
-    public ResBody getProjectsColletion() {
+    public ResBody getProjectsCollection() {
 
         List<ProjectInfo> projectInfos = projectService.selectAllProjects();
 

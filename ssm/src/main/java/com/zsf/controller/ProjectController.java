@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
@@ -64,8 +64,8 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value = "/getProjectsCollection", method = RequestMethod.POST)
-    public @ResponseBody ResBody getProjectsColletion() {
-        return projectBusiness.getProjectsColletion();
+    public @ResponseBody ResBody getProjectsCollection() {
+        return projectBusiness.getProjectsCollection();
     }
 
     /**
@@ -74,8 +74,8 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value = "/addProjectToCollection", method = RequestMethod.POST)
-    public @ResponseBody ResBody addProjectToColletion(@RequestBody ProjectDto projectDto) {
-        return projectBusiness.addProjectToColletion(projectDto);
+    public @ResponseBody ResBody addProjectToCollection(@RequestBody ProjectDto projectDto) {
+        return projectBusiness.addProjectToCollection(projectDto);
     }
 
     public static void main(String[] args) {

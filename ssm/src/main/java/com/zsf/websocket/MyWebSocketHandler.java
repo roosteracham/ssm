@@ -1,5 +1,6 @@
 package com.zsf.websocket;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MyWebSocketHandler implements WebSocketHandler {
 
-    private Thread thread;
+    private Logger logger = Logger.getLogger(MyWebSocketHandler.class);
 
     private static final ScheduledExecutorService executorService =
             Executors.newSingleThreadScheduledExecutor();
@@ -24,34 +25,33 @@ public class MyWebSocketHandler implements WebSocketHandler {
     //建立连接后的操作
     public void afterConnectionEstablished(WebSocketSession session)
             throws Exception {
-        System.out.println("已建立连接..");
+        logger.info("已建立连接..");
 
-        executorService.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
+        executorService.scheduleWithFixedDelay(() -> {
+            String[] strings;
+            synchronized (receivedMessage) {
+                strings = receivedMessage.split(",");
+            }
 
-                String[] strings = receivedMessage.split(",");
+            StringBuilder stringBuilder = new StringBuilder("{");
 
-                StringBuilder stringBuilder = new StringBuilder("{");
-
-                for (int j = 0; j < strings.length; j++) {
-                    stringBuilder.append("\"")
-                            .append(strings[j])
-                            .append("\":\"")
-                            .append((int)(Math.random() * 50));
-                    if (j == strings.length - 1) {
-                        stringBuilder.append("\"");
-                    } else {
-                        stringBuilder.append("\",");
-                    }
+            for (int j = 0; j < strings.length; j++) {
+                stringBuilder.append("\"")
+                        .append(strings[j])
+                        .append("\":\"")
+                        .append((int)(Math.random() * 50));
+                if (j == strings.length - 1) {
+                    stringBuilder.append("\"");
+                } else {
+                    stringBuilder.append("\",");
                 }
-                stringBuilder.append("}");
+            }
+            stringBuilder.append("}");
 
-                try {
-                    session.sendMessage(new TextMessage(stringBuilder.toString()));
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                session.sendMessage(new TextMessage(stringBuilder.toString()));
+            }catch (IOException e) {
+                e.printStackTrace();
             }
         }, 1, 1, TimeUnit.SECONDS);
     }
@@ -59,9 +59,10 @@ public class MyWebSocketHandler implements WebSocketHandler {
     //消息处理，在客户端通过Websocket API发送的消息会经过这里，然后进行相应的处理
     public void handleMessage(WebSocketSession session,
                               WebSocketMessage<?> message) throws Exception {
-        receivedMessage = message.getPayload().toString();
-        //System.out.println(receivedMessage);
-        //sendMessages(session, receivedMessage);
+        synchronized (receivedMessage) {
+            receivedMessage = message.getPayload().toString();
+        }
+        logger.info("receivedMessage : " + receivedMessage);
     }
 
     private void sendMessages(WebSocketSession session, String receivedMessage) {
@@ -71,15 +72,13 @@ public class MyWebSocketHandler implements WebSocketHandler {
     //消息传输错误处理
     public void handleTransportError(WebSocketSession session,
                                      Throwable exception) throws Exception {
-        System.out.println("消息传输错误..");
-        thread.stop();
+        logger.error("消息传输错误..");
     }
 
     //连接关闭后的操作
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus closeStatus) throws Exception {
-        System.out.println("连接关闭后的操作..");
-        thread.stop();
+       logger.info("连接关闭后的操作..");
     }
 
     public boolean supportsPartialMessages() {

@@ -16,9 +16,6 @@
           p:password="${mailSender.password}"
           p:defaultEncoding="utf-8"
           />
-    <bean id="freeMarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
-        <property name="templateLoaderPath" value="classpath:template" />
-    </bean>
 
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
         <property name="velocityProperties">
