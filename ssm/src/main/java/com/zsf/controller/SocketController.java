@@ -9,6 +9,6 @@ public class SocketController {
 
     @RequestMapping("/test")
     public String test() {
-        return "testws";
+        return "master";
     }
 }
