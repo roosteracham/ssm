@@ -79,6 +79,6 @@ public class ProjectController {
     }
 
     public static void main(String[] args) {
-        System.out.println("阿瑟东");
+        System.out.println("master test");
     }
 }
