@@ -1,10 +1,12 @@
 <html>
 <body>
-<h3>Hi ${user.id}, welcome to the Chipping Sodbury On-the-Hill message boards!</h3>
+<h3>Hi ${user.name}, welcome to the Chipping Sodbury On-the-Hill message boards!</h3>
 
 <div>
-    Your email name is <a href="#">${user.name}</a>.
-    点击连接 ： <a href="${user.pass}" >${user.pass}</a>
+    <a href="http://localhost:8888/mail/greeting/${user.url}" >打开贺卡</a>
+    <iframe src="https://rescdn.qqmail.com/zh_CN/greetingcard/flash2h5/card/b168/b168.html" frameborder="no">
+        不支持
+    </iframe>
 </div>
 </body>
 </html>

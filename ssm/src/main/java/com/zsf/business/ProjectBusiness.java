@@ -1,5 +1,6 @@
 package com.zsf.business;
 
+import com.alibaba.fastjson.JSON;
 import com.zsf.domain.*;
 import com.zsf.service.IComponentService;
 import com.zsf.service.IProjectService;
@@ -8,10 +9,13 @@ import com.zsf.service.RedisService;
 import com.zsf.util.errorcode.ErrorCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Transactional
 public class ProjectBusiness {
 
     @Autowired
@@ -129,42 +133,34 @@ public class ProjectBusiness {
                                     StringBuilder stringBuilder) {
         if (componentInfos == null || componentInfos.size() <= 0)
             return;
-        stringBuilder.append("\"4\":[");
+        List<String> list = new ArrayList<>();
         for (int i = 0; i < componentInfos.size(); i++) {
-            ComponentInfo componentInfo = componentInfos.get(i);
-            stringBuilder.append("\"")
-                    .append(componentInfo.getName())
-                    .append("\"");
-            if (i != componentInfos.size() - 1) {
-                stringBuilder.append(",");
-            }
+            list.add(componentInfos.get(i).getName());
         }
-        stringBuilder.append("]");
+        stringBuilder.append("\"4\":")
+                     .append(JSON.toJSON(list));
     }
 
     private void svgsToString(List<SvgInfo> svgInfos, StringBuilder stringBuilder, boolean append) {
 
         if (svgInfos == null || svgInfos.size() <= 0)
             return;
-        stringBuilder.append("\"1\":[");
+
+        List<SvgInfoDto> list = new ArrayList<>();
         for (int i = 0; i < svgInfos.size(); i++) {
+
             SvgInfo svg = svgInfos.get(i);
             ProjectInfo projectInfo = projectService.selectByProjectId(svg.getProjectId());
-            stringBuilder.append("{\"projectName\":\"")
-                    .append(projectInfo.getProjectName())
-                    .append("\",\"name\":\"")
-                    .append(svg.getName())
-                    .append("\",\"id\":\"")
-                    .append("svg-" + projectInfo.getProjectName()
-                            + "-" + svg.getName() + "-" + svg.getSvgId())
-                    .append("\",\"index\":\"")
-                    .append(svg.getSvgId())
-                    .append("\"}");
-            if (i != svgInfos.size() - 1) {
-                stringBuilder.append(",");
-            }
+            SvgInfoDto svgInfoDto = new SvgInfoDto();
+            svgInfoDto.setIndex(svg.getSvgId());
+            svgInfoDto.setName(svg.getName());
+            svgInfoDto.setProjectName(projectInfo.getProjectName());
+            svgInfoDto.setId("svg-" + projectInfo.getProjectName()
+                    + "-" + svg.getName() + "-" + svg.getSvgId());
+            list.add(svgInfoDto);
         }
-        stringBuilder.append("]");
+        stringBuilder.append("\"1\":")
+                     .append(JSON.toJSON(list));
         if (append) {
             stringBuilder.append(",");
         }
@@ -175,19 +171,8 @@ public class ProjectBusiness {
 
         if (projectInfos == null || projectInfos.size() <= 0)
             return;
-        stringBuilder.append("\"0\":[");
-        for (int i = 0; i < projectInfos.size(); i++) {
-            ProjectInfo project = projectInfos.get(i);
-            stringBuilder.append("{\"index\":\"")
-                    .append(project.getProjectId())
-                    .append("\",\"projectName\":\"")
-                    .append(project.getProjectName())
-                    .append("\"}");
-            if (i != projectInfos.size() - 1) {
-                stringBuilder.append(",");
-            }
-        }
-        stringBuilder.append("]");
+        stringBuilder.append("\"0\":")
+                     .append(JSON.toJSON(projectInfos));
         if (size > 0) {
             stringBuilder.append(",");
         }

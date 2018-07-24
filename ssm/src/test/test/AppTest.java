@@ -2,9 +2,22 @@ package test;
 
 import static org.junit.Assert.assertTrue;
 
+import com.zsf.business.MailBusiness;
+import com.zsf.domain.User;
+import com.zsf.domain.UserInfo;
+import com.zsf.service.IMailService;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.net.util.Base64;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import sun.misc.BASE64Encoder;
+import test.junit.BaseJunitTest;
 
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -12,7 +25,7 @@ import javax.activation.*;
 /**
  * Unit test for simple App.
  */
-public class AppTest
+public class AppTest extends BaseJunitTest
 {
     /**
      * Rigorous Test :-)
@@ -227,5 +240,65 @@ public class AppTest
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    @Autowired
+    IMailService mailBusiness;
+
+    @Rollback(false)
+    @Test
+    public void encode() {
+        String string = "abc阿瑟东";
+        System.out.println(string);
+        try {
+            UserInfo user = new UserInfo();
+            user.setName("张三");
+            Calendar calendar = Calendar.getInstance();
+            MessageDigest md5 = MessageDigest.getInstance("md5");
+
+            BASE64Encoder base64Encoder = new BASE64Encoder();
+            byte[] encoderMD5 = md5.digest((calendar + "").getBytes("UTF-8"));
+            String encodeMD5String = new String(encoderMD5);
+            user.setAuth(base64Encoder.encode(encoderMD5));
+            //System.out.println(encodeMD5String);
+            Date date = calendar.getTime();
+            user.setExpireTime(DateUtils.addDays(date, 1));
+            //System.out.println(date);
+            //System.out.println(date.before(user.getExpireTime()));
+            /*String param = "id:" + user.getId() + ";url:" + user.getAuth();
+
+            String url = "http//localhost:8888/mail/greeting?param=" +
+                    base64Encoder.encode(param.getBytes("UTF-8"));
+            user.setUrl(url);*/
+            mailBusiness.insert(user);
+            /*String encoded = base64Encoder.encode(encoderMD5);
+            System.out.println(base64Encoder.encode(encoderMD5).equals(encoded));
+            System.out.println(encoderMD5.equals(
+                    Base64.decodeBase64(encoded)));*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Rollback(false)
+    @Test
+    public void test2() throws Exception{
+        UserInfo user = mailBusiness.selectById(16);
+        BASE64Encoder base64Encoder = new BASE64Encoder();
+        String param = "id:" + user.getId() + ";url:" + user.getAuth();
+            /*String url = "http//localhost:8888/mail/greeting?param=" +
+                    base64Encoder.encode(param.getBytes("UTF-8"));*/
+        user.setUrl(base64Encoder.encode(param.getBytes("UTF-8")));
+
+        mailBusiness.update(user);
+    }
+
+    @Rollback(false)
+    @Test
+    public void test3() {
+
+        UserInfo user = mailBusiness.selectById(16);
+
     }
 }

@@ -5,9 +5,13 @@ import com.zsf.service.IUserService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import sun.misc.BASE64Encoder;
+import sun.security.provider.MD5;
 import test.junit.BaseJunitTest;
 
 import javax.servlet.http.HttpSession;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
 
@@ -40,6 +44,6 @@ public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
 
     @Test
     public void pathTest() {
-        System.out.println();
+
     }
 }
