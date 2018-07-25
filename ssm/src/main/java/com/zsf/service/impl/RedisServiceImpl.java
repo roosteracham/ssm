@@ -1,7 +1,9 @@
 package com.zsf.service.impl;
 
+import com.zsf.dao.RedisDao;
 import com.zsf.domain.*;
 import com.zsf.service.RedisService;
+import com.zsf.util.errorcode.ErrorCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -10,30 +12,54 @@ import org.springframework.stereotype.Service;
 public class RedisServiceImpl implements RedisService {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisDao redisDao;
 
-    @Override
-    public void set(String key, String value) {
-        redisTemplate.opsForValue().set(key, value);
+    public ResBody set(SVGDto svgDto) {
+        String key = svgDto.getProjectName() + "_" +
+                svgDto.getSvgName() + "_" + svgDto.getIndex();
+        String value = svgDto.getSvg();
+        redisDao.set(key, value);
+        // 设置返回参数
+        ResBody body = new ResBody();
+        body.setSuccess(true);
+        body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        body.setData("");
+        return body;
     }
 
-    @Override
-    public String getGroup(String key) {
-        return (String) redisTemplate.opsForValue().get(key);
+    public ResBody getValue(SVGDto svgDto) {
+
+        String key = svgDto.getProjectName() + "_" + svgDto.getSvgName()
+                + "_" + svgDto.getIndex();
+        String value =  redisDao.getValue(key);
+
+        ResBody body = new ResBody();
+        body.setSuccess(true);
+        body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        body.setData(value);
+        return body;
     }
 
-    @Override
-    public void saveGroupedElement(String key, String data) {
-        redisTemplate.opsForValue().set(key,
-                data);
+    public ResBody delete(SVGDto svgDto) {
+
+        String key = svgDto.getProjectName() + "_" + svgDto.getSvgName()
+                + "_" + svgDto.getIndex();
+        redisDao.delete(key);
+
+        ResBody body = new ResBody();
+        body.setSuccess(true);
+        body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        body.setData("");
+        return body;
     }
 
-    public String getValue(String key) {
-        return (String)redisTemplate.opsForValue().get(key);
-    }
-
-    @Override
-    public void delete(String key) {
-        redisTemplate.delete(key);
+    public ResBody getGroupedElement(GroupedElement group) {
+        String key = "group_" + group.getGroupName();
+        String data = redisDao.getGroup(key);
+        ResBody body = new ResBody();
+        body.setSuccess(true);
+        body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        body.setData(data);
+        return body;
     }
 }

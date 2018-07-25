@@ -1,8 +1,8 @@
 package com.zsf.controller;
 
-import com.zsf.business.ProjectBusiness;
-import com.zsf.business.RedisBusiness;
 import com.zsf.domain.*;
+import com.zsf.service.IProjectService;
+import com.zsf.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectController {
 
     @Autowired
-    private RedisBusiness redisBusiness;
+    private RedisService redisService;
 
     @Autowired
-    private ProjectBusiness projectBusiness;
+    private IProjectService projectService;
 
     /**
      *  保存画面接口
@@ -26,7 +26,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public @ResponseBody ResBody saveProject(@RequestBody SVGDto svg) {
-        return redisBusiness.set(svg);
+        return redisService.set(svg);
     }
 
     /**
@@ -36,7 +36,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     public @ResponseBody ResBody getProject(@RequestBody SVGDto svg) {
-        return redisBusiness.getValue(svg);
+        return redisService.getValue(svg);
     }
 
     /**
@@ -46,7 +46,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/saveGroup", method = RequestMethod.POST)
     public @ResponseBody ResBody saveGroup(@RequestBody GroupedElement group) {
-        return projectBusiness.saveGroupedElement(group);
+        return projectService.saveGroupedElement(group);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/getGroup", method = RequestMethod.POST)
     public @ResponseBody ResBody getGroup(@RequestBody GroupedElement group) {
-        return redisBusiness.getGroupedElement(group);
+        return redisService.getGroupedElement(group);
     }
     /**
      *  获得集合接口
@@ -65,7 +65,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/getProjectsCollection", method = RequestMethod.POST)
     public @ResponseBody ResBody getProjectsCollection() {
-        return projectBusiness.getProjectsCollection();
+        return projectService.getProjectsCollection();
     }
 
     /**
@@ -75,7 +75,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/addProjectToCollection", method = RequestMethod.POST)
     public @ResponseBody ResBody addProjectToCollection(@RequestBody ProjectDto projectDto) {
-        return projectBusiness.addProjectToCollection(projectDto);
+        return projectService.addProjectToCollection(projectDto);
     }
 
     public static void main(String[] args) {

@@ -1,20 +1,16 @@
 package com.zsf.service;
 
+import com.zsf.domain.GroupedElement;
+import com.zsf.domain.ProjectDto;
 import com.zsf.domain.ProjectInfo;
+import com.zsf.domain.ResBody;
 
 import java.util.List;
 
 public interface IProjectService {
+    ResBody addProjectToCollection(ProjectDto projectDto);
 
-    int insert(ProjectInfo projectInfo);
+    ResBody getProjectsCollection();
 
-    int update(ProjectInfo projectInfo);
-
-    int delete(int id);
-
-    ProjectInfo select(int id);
-
-    List<ProjectInfo> selectAllProjects();
-
-    ProjectInfo selectByProjectId(int id);
+    ResBody saveGroupedElement(GroupedElement group);
 }

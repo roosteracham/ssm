@@ -1,36 +1,32 @@
-package com.zsf.service.impl;
+package com.zsf.dao;
 
 import com.zsf.domain.ComponentInfo;
 import com.zsf.mapper.ComponentInfoMapper;
-import com.zsf.service.IComponentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Service
-public class ComponentServiceImpl implements IComponentService {
+@Repository
+public class ComponentInfoDao {
 
     @Autowired
     private ComponentInfoMapper componentInfoMapper;
 
-    @Override
     public void insert(ComponentInfo componentInfo) {
         componentInfoMapper.insert(componentInfo);
     }
 
-    @Override
     public void updateByPrimaryId(ComponentInfo componentInfo) {
         componentInfoMapper.updateByPrimaryKey(componentInfo);
     }
 
-    @Override
     public List<ComponentInfo> getAllComponents() {
         return componentInfoMapper.getAllComponents();
     }
 
-    @Override
     public ComponentInfo getComponentByName(String name) {
         return componentInfoMapper.getComponentByName(name);
     }
 }
+

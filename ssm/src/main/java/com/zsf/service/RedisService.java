@@ -3,13 +3,11 @@ package com.zsf.service;
 import com.zsf.domain.*;
 
 public interface RedisService {
-    void set(String key, String value);
+    ResBody set(SVGDto svgDto);
 
-    String getValue(String svgDto);
+    ResBody getValue(SVGDto svgDto);
 
-    void delete(String svgDto);
+    ResBody delete(SVGDto svgDto);
 
-    void saveGroupedElement(String key, String data);
-
-    String getGroup(String key);
+    ResBody getGroupedElement(GroupedElement group);
 }
