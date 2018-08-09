@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin("*")
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
@@ -76,6 +76,16 @@ public class ProjectController {
     @RequestMapping(value = "/addProjectToCollection", method = RequestMethod.POST)
     public @ResponseBody ResBody addProjectToCollection(@RequestBody ProjectDto projectDto) {
         return projectService.addProjectToCollection(projectDto);
+    }
+
+    /**
+     *  添加集合元素
+     * @param projectDto
+     * @return
+     */
+    @RequestMapping(value = "/deleteSvg", method = RequestMethod.POST)
+    public @ResponseBody ResBody deleteSvg(@RequestBody ProjectDto projectDto) {
+        return projectService.deleteSvg(projectDto);
     }
 
     public static void main(String[] args) {

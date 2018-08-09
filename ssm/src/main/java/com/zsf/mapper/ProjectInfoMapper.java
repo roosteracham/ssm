@@ -20,4 +20,6 @@ public interface ProjectInfoMapper {
     ProjectInfo selectByProjectId(int projectId);
 
     List<ProjectInfo> selectAllProjects();
+
+    ProjectInfo selectByProjectName(String name);
 }

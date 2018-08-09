@@ -30,34 +30,67 @@ public class ProjectServiceImpl implements IProjectService {
     private RedisDao redisDao;
 
     @Override
-    public ResBody addProjectToCollection(ProjectDto projectDto) {
-
-        // 更新工程
-        ProjectInfo projectInfo = new ProjectInfo();
-        projectInfo.setProjectId(projectDto.getProjectIndex());
-        projectInfo.setProjectName(projectDto.getProjectName());
-
-        ProjectInfo project = projectInfoDao.selectByProjectId(projectInfo.getProjectId());
-
-        if (project == null) {
-            projectInfoDao.insert(projectInfo);
-        }
-
-        // 更新画面
-        SvgInfo svgInfo = new SvgInfo();
-        svgInfo.setSvgId(projectDto.getSvgIndex());
-        svgInfo.setProjectId(projectDto.getProjectIndex());
-        svgInfo.setName(projectDto.getName());
-
-        SvgInfo svg = svgInfoDao.selectBySvgId(svgInfo.getSvgId());
-
-        if (svg == null) {
-            svgInfoDao.insert(svgInfo);
-        }
+    public ResBody deleteSvg(ProjectDto projectDto) {
 
         ResBody body = new ResBody();
         body.setSuccess(true);
         body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        try {
+            ProjectInfo projectInfo = projectInfoDao.selectByProjectName(projectDto.getProjectName());
+            if (null != projectInfo) {
+                SvgInfo svgInfo = new SvgInfo();
+                svgInfo.setName(projectDto.getName());
+                svgInfo.setProjectId(projectInfo.getProjectId());
+                svgInfoDao.deleteSvg(svgInfo);
+            } else {
+                throw new NullPointerException();
+            }
+
+            String key = projectInfo.getProjectName() + "_" +
+                    projectDto.getName() + "_" + projectDto.getSvgIndex();
+            redisDao.delete(key);
+        } catch (NullPointerException e) {
+            body.setSuccess(false);
+            body.setErrorCode(ErrorCodeEnum.FAIL.getIndex());
+        }
+        body.setData("");
+        return body;
+    }
+
+    @Override
+    public ResBody addProjectToCollection(ProjectDto projectDto) {
+
+        // 更新工程
+        ProjectInfo projectInfo = new ProjectInfo();
+        projectInfo.setProjectName(projectDto.getProjectName());
+        projectInfo.setProjectId(projectDto.getProjectIndex());
+
+        ResBody body = new ResBody();
+        try {
+            ProjectInfo project = projectInfoDao.selectByProjectName(projectInfo.getProjectName());
+
+            if (project == null) {
+                projectInfoDao.insert(projectInfo);
+            }
+
+            // 更新画面
+            SvgInfo svgInfo = new SvgInfo();
+            svgInfo.setSvgId(projectDto.getSvgIndex());
+            svgInfo.setProjectId(projectInfo.getProjectId());
+            svgInfo.setName(projectDto.getName());
+
+            SvgInfo svg = svgInfoDao.selectBySvgId(svgInfo.getSvgId());
+
+            if (svg == null) {
+                svgInfoDao.insert(svgInfo);
+            }
+            body.setSuccess(true);
+            body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
+        } catch (Exception e) {
+            body.setSuccess(false);
+            body.setErrorCode(ErrorCodeEnum.FAIL.getIndex());
+        }
+
         body.setData("");
         return body;
     }

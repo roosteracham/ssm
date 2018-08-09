@@ -37,4 +37,8 @@ public class ProjectInfoDao {
     public ProjectInfo selectByProjectId(int index) {
         return projectInfoMapper.selectByProjectId(index);
     }
+
+    public ProjectInfo selectByProjectName(String name) {
+        return projectInfoMapper.selectByProjectName(name);
+    }
 }

@@ -13,4 +13,6 @@ public interface IProjectService {
     ResBody getProjectsCollection();
 
     ResBody saveGroupedElement(GroupedElement group);
+
+    ResBody deleteSvg(ProjectDto projectDto);
 }

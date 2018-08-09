@@ -33,6 +33,11 @@
     from svg_info
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <delete id="deleteSvg" parameterType="com.zsf.domain.SvgInfo">
+    delete from svg_info
+    where project_id = #{projectId,jdbcType=INTEGER}
+    and name = #{name, jdbcType=VARCHAR}
+  </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from svg_info
     where id = #{id,jdbcType=INTEGER}

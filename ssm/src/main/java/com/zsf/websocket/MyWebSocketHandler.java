@@ -8,6 +8,8 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 /**
@@ -20,40 +22,48 @@ public class MyWebSocketHandler implements WebSocketHandler {
     private static final ScheduledExecutorService executorService =
             Executors.newSingleThreadScheduledExecutor();
 
+    // 对session加锁
+    private ReadWriteLock sessionLock = new ReentrantReadWriteLock();
+
     // 可对300个测点值更新
-    private List<String> points = new ArrayList<>(300);
+    private final static List<String> points = new ArrayList(300);
 
     private Set<WebSocketSession> sessions = new HashSet<>();
 
     public MyWebSocketHandler() {
         executorService.scheduleWithFixedDelay(() -> {
 
-            if (!sessions.isEmpty()) {
-                StringBuilder stringBuilder = new StringBuilder("{");
+            sessionLock.readLock().lock();
+            try {
+                if (!sessions.isEmpty()) {
 
-                synchronized (points) {
-                    for (int j = 0; j < points.size(); j++) {
-                        stringBuilder.append("\"")
-                                .append(points.get(j))
-                                .append("\":\"")
-                                .append((int) (Math.random() * 50));
-                        if (j == points.size() - 1) {
-                            stringBuilder.append("\"");
-                        } else {
-                            stringBuilder.append("\",");
+                    StringBuilder stringBuilder = new StringBuilder("{");
+                    synchronized (points) {
+                        for (int j = 0; j < points.size(); j++) {
+                            stringBuilder.append("\"")
+                                    .append(points.get(j))
+                                    .append("\":\"")
+                                    .append((int) (Math.random() * 50));
+                            if (j == points.size() - 1) {
+                                stringBuilder.append("\"");
+                            } else {
+                                stringBuilder.append("\",");
+                            }
                         }
                     }
-                }
-                stringBuilder.append("}");
+                    stringBuilder.append("}");
 
-                try {
-                    for (WebSocketSession s :
-                            sessions) {
-                        s.sendMessage(new TextMessage(stringBuilder.toString()));
+                    try {
+                        for (WebSocketSession s :
+                                sessions) {
+                            s.sendMessage(new TextMessage(stringBuilder.toString()));
+                        }
+                    } catch (IOException e) {
+                        logger.error(e.getMessage());
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+            } finally {
+                sessionLock.readLock().unlock();
             }
         }, 1, 1, TimeUnit.SECONDS);
     }
@@ -62,7 +72,17 @@ public class MyWebSocketHandler implements WebSocketHandler {
             throws Exception {
         logger.info("已建立连接..");
 
-        sessions.add(session);
+        sessionLock.writeLock().lock();
+        try {
+            sessions.add(session);
+            // 锁降级， 保证可见性
+            sessionLock.readLock().lock();
+            sessionLock.writeLock().unlock();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        } finally {
+            sessionLock.readLock().unlock();
+        }
     }
 
     //消息处理，在客户端通过Websocket API发送的消息会经过这里，然后进行相应的处理
@@ -93,7 +113,17 @@ public class MyWebSocketHandler implements WebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus closeStatus) throws Exception {
         logger.info("连接关闭后的操作..");
-        sessions.remove(session);
+        sessionLock.writeLock().lock();
+        try {
+            sessions.remove(session);
+            // 锁降级， 保证可见性
+            sessionLock.readLock().lock();
+            sessionLock.writeLock().unlock();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        } finally {
+            sessionLock.readLock().unlock();
+        }
     }
 
     public boolean supportsPartialMessages() {

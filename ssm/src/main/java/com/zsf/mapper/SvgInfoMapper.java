@@ -22,4 +22,6 @@ public interface SvgInfoMapper {
     SvgInfo selectBySvgId(int svgId);
 
     SvgInfo selectByProjectId(Integer projectId);
+
+    void deleteSvg(SvgInfo svgInfo);
 }

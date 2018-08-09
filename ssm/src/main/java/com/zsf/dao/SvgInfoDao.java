@@ -41,5 +41,9 @@ public class SvgInfoDao {
     public List<SvgInfo> selectAllSvgs() {
         return svgInfoMapper.selectAllSvg();
     }
+
+    public void deleteSvg(SvgInfo svgInfo) {
+        svgInfoMapper.deleteSvg(svgInfo);
+    }
 }
 
