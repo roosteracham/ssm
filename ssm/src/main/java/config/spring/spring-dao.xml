@@ -8,66 +8,67 @@
     <!-- 配置整合mybatis过程 -->
     <!-- 1.配置数据库相关参数properties的属性：${url} -->
     <context:property-placeholder location="classpath:config/properties/*.properties" />
-
-    <bean id="abstractDataSource" abstract="true" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+<!--
+    <bean id="abstractDataSource" abstract="true" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close">
         <property name="driverClassName" value="${jdbc.mysql.driver}"/>
-        <!-- 配置获取连接等待超时的时间 -->
+        &lt;!&ndash; 配置获取连接等待超时的时间 &ndash;&gt;
         <property name="maxWait" value="60000"/>
-        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        &lt;!&ndash; 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 &ndash;&gt;
         <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        &lt;!&ndash; 配置一个连接在池中最小生存的时间，单位是毫秒 &ndash;&gt;
         <property name="minEvictableIdleTimeMillis" value="300000"/>
         <property name="validationQuery" value="SELECT 'x'"/>
         <property name="testWhileIdle" value="true"/>
         <property name="testOnBorrow" value="false"/>
         <property name="testOnReturn" value="false"/>
-        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        &lt;!&ndash; 打开PSCache，并且指定每个连接上PSCache的大小 &ndash;&gt;
         <property name="poolPreparedStatements" value="true"/>
         <property name="maxPoolPreparedStatementPerConnectionSize" value="20"/>
-        <!-- 配置初始化大小、最小、最大 -->
+        &lt;!&ndash; 配置初始化大小、最小、最大 &ndash;&gt;
         <property name="initialSize" value="5"/>
         <property name="minIdle" value="5"/>
         <property name="maxActive" value="100"/>
     </bean>
 
     <bean id="dataSourceRead1" parent="abstractDataSource">
-        <!-- 基本属性 url、user、password -->
+        &lt;!&ndash; 基本属性 url、user、password &ndash;&gt;
         <property name="url" value="${jdbc.slave1.url}"/>
         <property name="username" value="${jdbc.slave1.username}"/>
         <property name="password" value="${jdbc.slave1.password}"/>
     </bean>
 
     <bean id="dataSourceWrite" parent="abstractDataSource">
-        <!-- 基本属性 url、user、password -->
+        &lt;!&ndash; 基本属性 url、user、password &ndash;&gt;
         <property name="url" value="${jdbc.master.url}"/>
         <property name="username" value="${jdbc.master.username}"/>
         <property name="password" value="${jdbc.master.password}"/>
-    </bean>
+    </bean>-->
 
-    <bean id="dataSource" class="com.zsf.util.dataSource.DynamicDataSource">
+    <!--<bean id="dataSource" class="com.zsf.util.dataSource.DynamicDataSource">
         <property name="writeDataSource" ref="dataSourceWrite" />
         <property name="readDataSource" ref="dataSourceRead1" />
-        <!--轮询方式-->
-    </bean>
+        &lt;!&ndash;轮询方式&ndash;&gt;
+    </bean>-->
 
     <!-- 2.数据库连接池 -->
-    <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        &lt;!&ndash; 配置连接池属性 &ndash;&gt;
-        <property name="driverClass" value="${jdbc.driver}" />
-        <property name="jdbcUrl" value="${jdbc.url}" />
-        <property name="user" value="${jdbc.username}" />
-        <property name="password" value="${jdbc.password}" />
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!-- 配置连接池属性 -->
+        <property name="driverClass" value="${jdbc.mysql.driver}" />
+        <property name="jdbcUrl" value="${jdbc.master.url}" />
+        <property name="user" value="${jdbc.master.username}" />
+        <property name="password" value="${jdbc.master.password}" />
 
-        &lt;!&ndash; c3p0连接池的私有属性 &ndash;&gt;
+        <!-- c3p0连接池的私有属性 -->
         <property name="maxPoolSize" value="30" />
         <property name="minPoolSize" value="10" />
-        &lt;!&ndash; 关闭连接后不自动commit &ndash;&gt;
+        <!-- 关闭连接后不自动commit -->
         <property name="autoCommitOnClose" value="false" />
-        &lt;!&ndash; 获取连接超时时间 &ndash;&gt;
+        <!-- 获取连接超时时间 -->
         <property name="checkoutTimeout" value="10000" />
-        &lt;!&ndash; 当获取连接失败重试次数 &ndash;&gt;
+        <!-- 当获取连接失败重试次数 -->
         <property name="acquireRetryAttempts" value="2" />
-    </bean>-->
+    </bean>
 
     <!-- 3.配置SqlSessionFactory对象 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -93,6 +94,6 @@
         <!-- 注入sqlSessionFactory -->
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
         <!-- 给出需要扫描Dao接口包 -->
-        <property name="basePackage" value="com.zsf.mapper" />
+        <property name="basePackage" value="com.zsf.util.mapper" />
     </bean>
 </beans>

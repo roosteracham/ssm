@@ -32,16 +32,24 @@ import java.util.concurrent.ConcurrentHashMap;
                 ResultHandler.class})})
 public class DynamicPlugin implements Interceptor {
 
-    protected static final Logger logger = LoggerFactory.getLogger(DynamicPlugin.class);
+    protected static final
+    Logger logger = LoggerFactory.getLogger(DynamicPlugin.class);
 
-    private static final String REGEX = ".*insert\\u0020.*|.*delete\\u0020.*|.*update\\u0020.*";
+    private static final
+    String REGEX = ".*insert\\u0020.*|.*delete\\u0020.*|.*update\\u0020.*";
 
-    private static final Map<String, DynamicDataSourceGlobal> cacheMap = new ConcurrentHashMap<>();
+    private static final
+    Map<String, DynamicDataSourceGlobal> cacheMap = new ConcurrentHashMap<>();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
 
-        boolean synchronizationActive = TransactionSynchronizationManager.isSynchronizationActive();
+        //它首先查看当前是否存在事务管理上下文，并尝试从事务管理上下文获取连接，
+        // 如果获取失败，直接从数据源中获取连接。
+        //在获取连接后，如果当前拥有事务上下文，则将连接绑定到事务上下文中。
+        // （此处直接继续下一过程）
+        boolean synchronizationActive =
+                TransactionSynchronizationManager.isSynchronizationActive();
         if (!synchronizationActive) {
             Object[] objects = invocation.getArgs();
             MappedStatement ms = (MappedStatement) objects[0];
@@ -56,7 +64,8 @@ public class DynamicPlugin implements Interceptor {
                         dynamicDataSourceGlobal = DynamicDataSourceGlobal.WRITE;
                     } else {
                         BoundSql boundSql = ms.getSqlSource().getBoundSql(objects[1]);
-                        String sql = boundSql.getSql().toLowerCase(Locale.CHINA).replaceAll("[\\t\\n\\r]", " ");
+                        String sql = boundSql.getSql().toLowerCase(
+                                Locale.CHINA).replaceAll("[\\t\\n\\r]", " ");
                         if (sql.matches(REGEX)) {
                             dynamicDataSourceGlobal = DynamicDataSourceGlobal.WRITE;
                         } else {

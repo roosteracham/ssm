@@ -100,6 +100,13 @@
       <artifactId>spring-messaging</artifactId>
       <version>${spring.version}</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-aop -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
     <!-- spring mail-->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -180,7 +187,7 @@
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
-      <version>1.8.10</version>
+      <version>1.9.1</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/aopalliance/aopalliance -->
     <dependency>
@@ -188,13 +195,14 @@
       <artifactId>aopalliance</artifactId>
       <version>1.0</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/aspectj/aspectjtools-->
+    <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjtools -->
     <dependency>
-      <groupId>aspectj</groupId>
+      <groupId>org.aspectj</groupId>
       <artifactId>aspectjtools</artifactId>
-      <version>1.5.0</version>
+      <version>1.8.9</version>
     </dependency>
-      <!--https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator-core -->
+
+    <!--https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator-core -->
       <dependency>
         <groupId>org.mybatis.generator</groupId>
         <artifactId>mybatis-generator-core</artifactId>
@@ -267,6 +275,16 @@
           <artifactId>commons-lang3</artifactId>
           <version>3.4</version>
       </dependency>
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>2.2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz-jobs</artifactId>
+      <version>2.2.3</version>
+    </dependency>
 
   </dependencies>
 

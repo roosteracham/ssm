@@ -5,8 +5,9 @@ import com.zsf.domain.*;
 import com.zsf.service.RedisService;
 import com.zsf.util.errorcode.ErrorCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisServiceImpl implements RedisService {
@@ -27,11 +28,17 @@ public class RedisServiceImpl implements RedisService {
         return body;
     }
 
+    @Override
+    public String getValue(String key) {
+        return redisDao.getValue(key);
+    }
+
     public ResBody getValue(SVGDto svgDto) {
 
+        System.out.println(Thread.currentThread().getName());
         String key = svgDto.getProjectName() + "_" + svgDto.getSvgName()
                 + "_" + svgDto.getIndex();
-        String value =  redisDao.getValue(key);
+        String value =  getValue(key);
 
         ResBody body = new ResBody();
         body.setSuccess(true);
@@ -51,6 +58,11 @@ public class RedisServiceImpl implements RedisService {
         body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
         body.setData("");
         return body;
+    }
+
+    @Override
+    public void setExpired(String key, String value, long time, TimeUnit unit) {
+        redisDao.setExpired(key, value, time, unit);
     }
 
     public ResBody getGroupedElement(GroupedElement group) {

@@ -1,7 +1,7 @@
 package com.zsf.dao;
 
 import com.zsf.domain.ComponentInfo;
-import com.zsf.mapper.ComponentInfoMapper;
+import com.zsf.util.mapper.ComponentInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

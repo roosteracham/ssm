@@ -19,8 +19,8 @@ public class C1 {
 
     @RequestMapping("/user/{id}")
     public String c(@PathVariable("id") int id) {
-        User user = userService.selectByPrimaryKey(id);
-        System.out.println(user.getName() + " : " + user.getPass());
+        //User user = userService.selectByPrimaryKey(id);
+        //System.out.println(user.getName() + " : " + user.getPass());
         return  null;
     }
 

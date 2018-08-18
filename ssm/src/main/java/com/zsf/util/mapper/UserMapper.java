@@ -1,4 +1,4 @@
-package com.zsf.mapper;
+package com.zsf.util.mapper;
 
 import com.zsf.domain.User;
 

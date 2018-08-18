@@ -289,7 +289,7 @@ public class AppTest extends BaseJunitTest
         String param = "id:" + user.getId() + ";url:" + user.getAuth();
             /*String url = "http//localhost:8888/mail/greeting?param=" +
                     base64Encoder.encode(param.getBytes("UTF-8"));*/
-        user.setUrl(base64Encoder.encode(param.getBytes("UTF-8")));
+        //user.setUrl(base64Encoder.encode(param.getBytes("UTF-8")));
 
         mailBusiness.update(user);
     }

@@ -1,4 +1,4 @@
-package com.zsf.websocket;
+package com.zsf.util.websocket;
 /**
  * websocket处理类
  * */

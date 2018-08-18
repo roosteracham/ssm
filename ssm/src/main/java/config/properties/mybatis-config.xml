@@ -15,9 +15,9 @@
 		<setting name="mapUnderscoreToCamelCase" value="true" />
 
 		<setting name="logImpl" value="STDOUT_LOGGING" />
-	</settings>
+	</settings><!--
 	<plugins>
 		<plugin interceptor="com.zsf.util.dataSource.DynamicPlugin">
 		</plugin>
-	</plugins>
+	</plugins>-->
 </configuration>

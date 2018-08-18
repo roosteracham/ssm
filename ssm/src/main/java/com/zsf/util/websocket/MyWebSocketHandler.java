@@ -1,4 +1,4 @@
-package com.zsf.websocket;
+package com.zsf.util.websocket;
 
 import org.apache.log4j.Logger;
 import org.springframework.web.socket.*;

@@ -2,7 +2,7 @@ package com.zsf.dao;
 
 import com.zsf.domain.ProjectDto;
 import com.zsf.domain.SvgInfo;
-import com.zsf.mapper.SvgInfoMapper;
+import com.zsf.util.mapper.SvgInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

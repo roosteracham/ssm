@@ -1,7 +1,7 @@
 package com.zsf.dao;
 
 import com.zsf.domain.ProjectInfo;
-import com.zsf.mapper.ProjectInfoMapper;
+import com.zsf.util.mapper.ProjectInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

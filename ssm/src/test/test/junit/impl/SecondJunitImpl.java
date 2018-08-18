@@ -24,8 +24,8 @@ public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
     @Test
     public void test() {
         System.out.println();
-        User user = iUserService.selectByPrimaryKey(1);
-        System.out.println(user.getName() + " " + user.getPass());
+        //User user = iUserService.selectByPrimaryKey(1);
+        //System.out.println(user.getName() + " " + user.getPass());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class SecondJunitImpl extends BaseJunitTest{ // 继承BaseJunitTest
         User user = new User();
         user.setName("qd");
         user.setPass("qsp");
-        iUserService.insert(user);
+        //iUserService.insert(user);
         int a = 1/0;
     }
 

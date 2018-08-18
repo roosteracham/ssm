@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.concurrent.TimeUnit;
+
 @Repository
 public class RedisDao {
 
@@ -29,6 +31,10 @@ public class RedisDao {
 
     public void delete(String key) {
         redisTemplate.delete(key);
+    }
+
+    public void setExpired(String key, String value, long time, TimeUnit unit) {
+        redisTemplate.opsForValue().set(key, value, time, unit);
     }
 }
 

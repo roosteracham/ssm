@@ -42,7 +42,7 @@ public class SendMailJunit extends BaseJunitTest {
 
                 UserInfo user = mailBusiness.selectById(16);
                 message.setSubject("贺卡");
-                message.setTo("roostera@163.com");
+                message.setTo("roostera@16er3.com");
                 /*String[] strings = new String[2];
                 strings[0] = "roostera@163.com";
                 strings[1] = from;

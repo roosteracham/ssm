@@ -2,8 +2,9 @@ package com.zsf.util.errorcode;
 
 public enum ErrorCodeEnum {
     SUC("成功", 0),
-    FAIL("失败", 1);
-
+    FAIL("失败", 1),
+    USERNAME_EXIST("用户名已存在", 2),
+    USER_EMAIL_EXIST("用户名已存在", 3);
     private String error;
 
     private int index;
