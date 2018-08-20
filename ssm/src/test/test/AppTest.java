@@ -3,6 +3,7 @@ package test;
 import static org.junit.Assert.assertTrue;
 
 import com.zsf.business.MailBusiness;
+import com.zsf.dao.UserInfoDao;
 import com.zsf.domain.User;
 import com.zsf.domain.UserInfo;
 import com.zsf.service.IMailService;
@@ -243,7 +244,7 @@ public class AppTest extends BaseJunitTest
     }
 
     @Autowired
-    IMailService mailBusiness;
+    UserInfoDao mailBusiness;
 
     @Rollback(false)
     @Test
@@ -291,7 +292,7 @@ public class AppTest extends BaseJunitTest
                     base64Encoder.encode(param.getBytes("UTF-8"));*/
         //user.setUrl(base64Encoder.encode(param.getBytes("UTF-8")));
 
-        mailBusiness.update(user);
+        //mailBusiness.update(user);
     }
 
     @Rollback(false)

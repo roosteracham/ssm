@@ -1,5 +1,7 @@
 package com.zsf.util.job;
 
+import com.zsf.business.MailBusiness;
+import com.zsf.dao.RedisDao;
 import com.zsf.dao.UserInfoDao;
 import com.zsf.domain.UserInfo;
 import com.zsf.service.IUserService;
@@ -19,7 +21,7 @@ public class MailJob {
     private UserInfoDao userInfoDao;
 
     @Autowired
-    private IUserService userService;
+    private MailBusiness mailBusiness;
 
     /**
      *  重新发送邮件
@@ -27,11 +29,12 @@ public class MailJob {
      */
     @Scheduled(cron = "${quartz.job.resendEmail}")
     public void resendEmail() {
+
         List<UserInfo> list = userInfoDao.selectByChecked(1);
 
         for (UserInfo userinfo :
                 list) {
-            userService.sendEmail(userinfo);
+            mailBusiness.sendEmail(userinfo);
         }
     }
 
@@ -50,7 +53,7 @@ public class MailJob {
                 Date expiredTime = DateUtils.addDays(date, 1);
                 user.setExpireTime(expiredTime);
                 userInfoDao.updataById(user);
-                userService.sendEmail(user);
+                mailBusiness.sendEmail(user);
             }
         }
     }

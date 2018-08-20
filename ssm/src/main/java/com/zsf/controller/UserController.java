@@ -6,6 +6,7 @@ import com.zsf.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -28,6 +29,7 @@ public class UserController {
                             HttpServletRequest request, HttpServletResponse response) {
         return userService.register(user);
     }
+
 
     @RequestMapping(value = "/confirm/{param}", method = RequestMethod.GET)
     public void confirm(@PathVariable("param") String param,

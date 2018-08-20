@@ -1,6 +1,7 @@
 package com.zsf.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.zsf.business.MailBusiness;
 import com.zsf.dao.UserInfoDao;
 import com.zsf.domain.ConfirmRegisterDto;
 import com.zsf.domain.ResBody;
@@ -8,6 +9,7 @@ import com.zsf.domain.TokenLocation;
 import com.zsf.domain.UserInfo;
 import com.zsf.service.IUserService;
 import com.zsf.service.RedisService;
+import com.zsf.util.encode.BASE64;
 import com.zsf.util.errorcode.ErrorCodeEnum;
 import com.zsf.util.errorcode.RedirectEnum;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +44,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Transactional
 @Service
 public class UserServiceImpl implements IUserService {
 
@@ -52,16 +53,10 @@ public class UserServiceImpl implements IUserService {
     private UserInfoDao userInfoDao;
 
     @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private VelocityEngine velocityEngine;
-
-    @Value("${mailSender.username}")
-    private String from;
-
-    @Autowired
     private RedisService redisService;
+
+    @Autowired
+    public MailBusiness mailBusiness;
 
     /**
      *  登陆
@@ -107,7 +102,7 @@ public class UserServiceImpl implements IUserService {
         try {
             String key = userInfo.getId() + "";
             BASE64Encoder base64Encoder = new BASE64Encoder();
-            String value = base64Encode(base64Encoder);
+            String value = BASE64.base64Encode(base64Encoder);
             // token放在redis里面，60分钟过期
             redisService.setExpired(key, value, 60, TimeUnit.MINUTES);
             // 设置token
@@ -141,54 +136,6 @@ public class UserServiceImpl implements IUserService {
             return 2;
         }
         return 0;
-    }
-
-    // 发送确认邮件
-    public void sendEmail(UserInfo userInfo) {
-
-        MimeMessagePreparator preparator = new MimeMessagePreparator() {
-            public void prepare(MimeMessage mimeMessage)
-                    throws MessagingException{
-                try {
-                    MimeMessageHelper message = new MimeMessageHelper(mimeMessage,
-                            "UTF-8");
-
-                    ConfirmRegisterDto confirmRegisterDto = new ConfirmRegisterDto();
-                    confirmRegisterDto.setName(userInfo.getName());
-                    getUrl(confirmRegisterDto);
-
-                    message.setSubject("确认注册");
-                    message.setTo(userInfo.getEmailAddr());
-                    message.setFrom(from); // could be parameterized...
-                    Map model = new HashMap();
-                    model.put("user", confirmRegisterDto);
-                    String text = VelocityEngineUtils.mergeTemplateIntoString(
-                            velocityEngine,
-                            "velocities/mail.vm",
-                            "UTF-8",
-                            model);
-                    message.setText(text, true);
-                } catch (MessagingException e) {
-                    logger.error("【 " + Thread.currentThread().getName() +
-                            "】 ", e.getMessage());
-                    throw e;
-                }
-            }
-        };
-
-        try {
-            this.mailSender.send(preparator);
-        } catch (MailException e) {
-            logger.error("【 " + Thread.currentThread().getName() +
-                    "】 sending confirming register email is failed");
-            return;
-        }
-
-        // 更新状态已经发送邮件
-        userInfo.setChecked(2);
-        userInfoDao.updataByName(userInfo);
-        logger.info("【 " + Thread.currentThread().getName() +
-                "】 confirming register email is sent");
     }
 
     /**
@@ -230,7 +177,7 @@ public class UserServiceImpl implements IUserService {
                         "】 重新发送确认邮件");
                 userInfo.setExpireTime(DateUtils.addDays(now, 1));
                 userInfoDao.updataById(userInfo);
-                sendEmail(userInfo);
+                mailBusiness.sendEmail(userInfo);
                 directUrl.append(RedirectEnum.LOGIN);
             } else {
                 logger.warn("【 " + Thread.currentThread().getName() +
@@ -241,35 +188,6 @@ public class UserServiceImpl implements IUserService {
 
         return directUrl.toString();
     }
-
-    private void getUrl(ConfirmRegisterDto confirmRegisterDto) {
-
-        try {
-            BASE64Encoder base64Encoder = new BASE64Encoder();
-            String param = "name:" + confirmRegisterDto.getName() + ";url:" +
-                    base64Encode(base64Encoder);
-
-            confirmRegisterDto.setUrl(
-                    base64Encoder.encode(param.getBytes("UTF-8")));
-        } catch (NoSuchAlgorithmException e) {
-            logger.error("【 " + Thread.currentThread().getName() +
-                    "】 ", e.getMessage());
-        } catch (UnsupportedEncodingException e) {
-            logger.error("【 " + Thread.currentThread().getName() +
-                    "】 ", e.getMessage());
-        }
-    }
-
-    private String base64Encode(BASE64Encoder base64Encoder)
-            throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        return base64Encoder.encode(md5Encode());
-    }
-    private byte[] md5Encode() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        Calendar calendar = Calendar.getInstance();
-        MessageDigest md5 = MessageDigest.getInstance("md5");
-        return md5.digest((calendar + "").getBytes("UTF-8"));
-    }
-
     /**
      * 注册
      *
@@ -303,7 +221,7 @@ public class UserServiceImpl implements IUserService {
                 // 先插一条记录
                 userInfoDao.insertSelective(userInfo);
                 // 发送确认邮件
-                sendEmail(userInfo);
+                mailBusiness.sendEmail(userInfo);
                 body.setSuccess(true);
                 body.setData(RedirectEnum.LOGIN);
                 break;

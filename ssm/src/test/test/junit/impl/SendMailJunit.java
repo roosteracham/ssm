@@ -1,5 +1,6 @@
 package test.junit.impl;
 
+import com.zsf.dao.UserInfoDao;
 import com.zsf.domain.User;
 import com.zsf.domain.UserInfo;
 import com.zsf.service.IMailService;
@@ -31,7 +32,7 @@ public class SendMailJunit extends BaseJunitTest {
     private final String to = "roosteracham@outlook.com";
 
     @Autowired
-    private IMailService mailBusiness;
+    private UserInfoDao mailBusiness;
 
     @Test
     public void test1() {

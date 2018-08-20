@@ -13,6 +13,4 @@ public interface IUserService {
     String confirm(String param, HttpServletRequest request);
 
     ResBody login(UserInfo user, HttpServletResponse response);
-
-    void sendEmail(UserInfo userinfo);
 }
