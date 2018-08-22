@@ -5,6 +5,7 @@ public enum ErrorCodeEnum {
     FAIL("失败", 1),
     USERNAME_EXIST("用户名已存在", 2),
     USER_EMAIL_EXIST("用户名已存在", 3);
+
     private String error;
 
     private int index;

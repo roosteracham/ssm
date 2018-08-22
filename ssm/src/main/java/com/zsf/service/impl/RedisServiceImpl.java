@@ -35,7 +35,6 @@ public class RedisServiceImpl implements RedisService {
 
     public ResBody getValue(SVGDto svgDto) {
 
-        System.out.println(Thread.currentThread().getName());
         String key = svgDto.getProjectName() + "_" + svgDto.getSvgName()
                 + "_" + svgDto.getIndex();
         String value =  getValue(key);

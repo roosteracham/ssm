@@ -3,14 +3,12 @@ package com.zsf.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.zsf.business.MailBusiness;
 import com.zsf.dao.UserInfoDao;
-import com.zsf.domain.ConfirmRegisterDto;
-import com.zsf.domain.ResBody;
-import com.zsf.domain.TokenLocation;
-import com.zsf.domain.UserInfo;
+import com.zsf.domain.*;
 import com.zsf.service.IUserService;
 import com.zsf.service.RedisService;
 import com.zsf.util.encode.BASE64;
 import com.zsf.util.errorcode.ErrorCodeEnum;
+import com.zsf.util.errorcode.MailServerEnum;
 import com.zsf.util.errorcode.RedirectEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -112,10 +110,7 @@ public class UserServiceImpl implements IUserService {
             cookie.setPath("/");
             response.addCookie(cookie);
             return key;
-        } catch (NoSuchAlgorithmException e) {
-            logger.error("【 " + Thread.currentThread().getName() +
-                    "】 exception : ", e.getMessage());
-        } catch (UnsupportedEncodingException e ) {
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             logger.error("【 " + Thread.currentThread().getName() +
                     "】 exception : ", e.getMessage());
         }
@@ -188,6 +183,7 @@ public class UserServiceImpl implements IUserService {
 
         return directUrl.toString();
     }
+
     /**
      * 注册
      *
@@ -215,16 +211,26 @@ public class UserServiceImpl implements IUserService {
                 body.setErrorCode(ErrorCodeEnum.USER_EMAIL_EXIST.getIndex());
                 break;
             default: // 未存在用户
-                Date date = Calendar.getInstance().getTime();
-                userInfo.setExpireTime(DateUtils.addDays(date, 1));
-                userInfo.setChecked(1);
-                // 先插一条记录
-                userInfoDao.insertSelective(userInfo);
-                // 发送确认邮件
-                mailBusiness.sendEmail(userInfo);
-                body.setSuccess(true);
-                body.setData(RedirectEnum.LOGIN);
-                break;
+
+                // 截取邮箱服务器类型
+                String emailType = userInfo.getEmailAddr().split("@")[1];
+                int index = MailServerEnum.getEmailServer(emailType);
+                if (-1 == index) {
+                    body.setData("不支持此类邮箱，请使用QQ、163、outlook邮箱注册！");
+                } else {
+                    Date date = Calendar.getInstance().getTime();
+                    userInfo.setExpireTime(DateUtils.addDays(date, 1));
+                    userInfo.setChecked(1);
+                    // 先插一条记录
+                    userInfoDao.insertSelective(userInfo);
+                    // 发送确认邮件
+                    mailBusiness.sendEmail(userInfo);
+                    EmailAddrDto emailAddrDto = new EmailAddrDto();
+                    emailAddrDto.setIndex(index);
+                    emailAddrDto.setLocation(RedirectEnum.EMAIL_SENT);
+                    body.setSuccess(true);
+                    body.setData(JSON.toJSONString(emailAddrDto));
+                }
         }
 
         return body;
