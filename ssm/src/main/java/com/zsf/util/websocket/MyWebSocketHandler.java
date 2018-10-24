@@ -1,5 +1,6 @@
 package com.zsf.util.websocket;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.socket.*;
 
@@ -8,7 +9,9 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
@@ -25,12 +28,16 @@ public class MyWebSocketHandler implements WebSocketHandler {
     // 对session加锁
     private ReadWriteLock sessionLock = new ReentrantReadWriteLock();
 
+    // pointLock
+    private Lock pointLock = new ReentrantLock();
+
     // 可对300个测点值更新
     private final static List<String> points = new ArrayList(300);
 
     private Set<WebSocketSession> sessions = new HashSet<>();
 
     public MyWebSocketHandler() {
+        // 完成向客户端发送数据的线程
         executorService.scheduleWithFixedDelay(() -> {
 
             sessionLock.readLock().lock();
@@ -38,7 +45,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
                 if (!sessions.isEmpty()) {
 
                     StringBuilder stringBuilder = new StringBuilder("{");
-                    synchronized (points) {
+                    try {
+                        pointLock.lock();
                         for (int j = 0; j < points.size(); j++) {
                             stringBuilder.append("\"")
                                     .append(points.get(j))
@@ -50,6 +58,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
                                 stringBuilder.append("\",");
                             }
                         }
+                    } finally {
+                        pointLock.unlock();
                     }
                     stringBuilder.append("}");
 
@@ -67,6 +77,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
             }
         }, 1, 1, TimeUnit.SECONDS);
     }
+
     //建立连接后的操作
     public void afterConnectionEstablished(WebSocketSession session)
             throws Exception {
@@ -92,12 +103,15 @@ public class MyWebSocketHandler implements WebSocketHandler {
         String[] newPoints = receivedMessage.split(",");
         for (int i = 0; i < newPoints.length; i++) {
 
-            synchronized (points) {
+            try {
+                pointLock.lock();
                 if (points.size() > 300) {
                     points.remove(0);
                 }
-                if (!points.contains(newPoints[i]) && newPoints[i] != "")
+                if (!points.contains(newPoints[i]) && !StringUtils.isEmpty(newPoints[i].trim()))
                     points.add(newPoints[i]);
+            } finally {
+                pointLock.unlock();
             }
         }
         logger.info("receivedMessage : " + receivedMessage);
@@ -107,6 +121,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
     public void handleTransportError(WebSocketSession session,
                                      Throwable exception) throws Exception {
         logger.error("消息传输错误..");
+        session.close();
     }
 
     //连接关闭后的操作

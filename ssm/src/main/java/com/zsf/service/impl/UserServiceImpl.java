@@ -86,7 +86,7 @@ public class UserServiceImpl implements IUserService {
             // token设置
             String token = setToken(response, userInfo);
             TokenLocation tokenLocation = new TokenLocation();
-            tokenLocation.setLocation(RedirectEnum.CONFIG);
+            tokenLocation.setLocation(RedirectEnum.RUN);
             tokenLocation.setToken(token);
             logger.info("【" + Thread.currentThread().getName() +
                     "】 用户：" + userInfo.getName() + " 登陆成功！");

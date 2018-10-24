@@ -12,6 +12,8 @@ public class RedirectEnum {
 
     public static final String CONFIG = "./config.html";
 
+    public static final String RUN = "./run.html";
+
     public static final String ERROR = "./error.html";
 
     public static final String EMAIL_SENT = "./emailSent.html";
