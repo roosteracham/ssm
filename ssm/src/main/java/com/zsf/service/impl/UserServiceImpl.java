@@ -3,6 +3,7 @@ package com.zsf.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.zsf.business.MailBusiness;
 import com.zsf.dao.UserInfoDao;
+import com.zsf.dao.UserSvgsDao;
 import com.zsf.domain.*;
 import com.zsf.service.IUserService;
 import com.zsf.service.RedisService;
@@ -36,10 +37,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -55,6 +53,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     public MailBusiness mailBusiness;
+
+    @Autowired
+    public UserSvgsDao userSvgsDao;
 
     /**
      *  登陆
@@ -93,6 +94,28 @@ public class UserServiceImpl implements IUserService {
             body.setSuccess(true);
             body.setData(JSON.toJSONString(tokenLocation));
         }
+        return body;
+    }
+
+    @Override
+    public ResBody roleManage(UserSvgsDto userSvgsDto) {
+        UserInfo userInfo = userInfoDao.selectById(userSvgsDto.getAuthId());
+        if (userInfo.getRole() == 3) {
+
+            List<Integer> svgs = userSvgsDao.selectSvgsByUserId(userInfo.getId());
+            UserSvgs userSvgs = new UserSvgs();
+            userSvgs.setUserId(userInfo.getId());
+            for(Integer id : userSvgsDto.getSvgIds()) {
+                if (!svgs.contains(id)) {
+                    userSvgs.setSvgId(id);
+                    userSvgsDao.insert(userSvgs);
+                }
+            }
+
+        }
+        ResBody body = new ResBody();
+        body.setData("");
+        body.setSuccess(true);
         return body;
     }
 

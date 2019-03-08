@@ -2,6 +2,7 @@ package com.zsf.controller;
 
 import com.zsf.domain.ResBody;
 import com.zsf.domain.UserInfo;
+import com.zsf.domain.UserSvgsDto;
 import com.zsf.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,7 @@ public class UserController {
     private IUserService userService;
 
     @RequestMapping("/register")
-    public ResBody register(@RequestBody UserInfo user,
-                            HttpServletRequest request, HttpServletResponse response) {
+    public ResBody register(@RequestBody UserInfo user) {
         return userService.register(user);
     }
 
@@ -46,5 +46,10 @@ public class UserController {
     public ResBody login(@RequestBody UserInfo user,
                          HttpServletResponse response) {
         return userService.login(user, response);
+    }
+
+    @RequestMapping("/roleManage")
+    public ResBody roleManage(@RequestBody UserSvgsDto userSvgsDto) {
+        return userService.roleManage(userSvgsDto);
     }
 }

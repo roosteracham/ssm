@@ -36,7 +36,8 @@ public class ProjectServiceImpl implements IProjectService {
         body.setSuccess(true);
         body.setErrorCode(ErrorCodeEnum.SUC.getIndex());
         try {
-            ProjectInfo projectInfo = projectInfoDao.selectByProjectName(projectDto.getProjectName());
+            ProjectInfo projectInfo = projectInfoDao.
+                    selectByProjectName(projectDto.getProjectName());
             if (null != projectInfo) {
                 SvgInfo svgInfo = new SvgInfo();
                 svgInfo.setName(projectDto.getName());
@@ -67,7 +68,8 @@ public class ProjectServiceImpl implements IProjectService {
 
         ResBody body = new ResBody();
         try {
-            ProjectInfo project = projectInfoDao.selectByProjectName(projectInfo.getProjectName());
+            ProjectInfo project = projectInfoDao.
+                    selectByProjectName(projectInfo.getProjectName());
 
             if (project == null) {
                 projectInfoDao.insert(projectInfo);
@@ -109,7 +111,7 @@ public class ProjectServiceImpl implements IProjectService {
         if (svgInfos.size() != 0 || projectInfos.size() != 0
                 || componentInfos.size() != 0) {
             svgsToString(svgInfos, stringBuilder,
-                    projectInfos.size() != 0 && componentInfos.size() != 0);
+                    projectInfos.size() != 0 || componentInfos.size() != 0);
             projectsToString(projectInfos, componentInfos.size(), stringBuilder);
             componentsToString(componentInfos, stringBuilder);
         }
