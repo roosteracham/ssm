@@ -1,16 +1,15 @@
 package com.zsf.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.zsf.dao.ComponentInfoDao;
-import com.zsf.dao.ProjectInfoDao;
-import com.zsf.dao.RedisDao;
-import com.zsf.dao.SvgInfoDao;
+import com.zsf.dao.*;
 import com.zsf.domain.*;
 import com.zsf.service.IProjectService;
 import com.zsf.util.errorcode.ErrorCodeEnum;
+import com.zsf.util.errorcode.RedirectEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +27,9 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Autowired
     private RedisDao redisDao;
+
+    @Autowired
+    private UserInfoDao userInfoDao;
 
     @Override
     public ResBody deleteSvg(ProjectDto projectDto) {
@@ -56,6 +58,39 @@ public class ProjectServiceImpl implements IProjectService {
         }
         body.setData("");
         return body;
+    }
+
+    @Override
+    public ResBody configHtml(Integer nep, HttpServletRequest request) {
+
+        String token = request.getHeader("Authorization").split(" ")[1];
+        int id = Integer.parseInt(token);
+        UserInfo userInfo = userInfoDao.selectById(id);
+        ResBody body = null;
+        if (null != userInfo) {
+
+            TokenLocation tokenLocation = new TokenLocation();
+            tokenLocation.setToken(token);
+            if (nep == 0) {
+                tokenLocation.setLocation(RedirectEnum.RUN);
+            } else {
+
+                if (userInfo.getRole() == 1) {
+                    tokenLocation.setLocation(RedirectEnum.CONFIG);
+                } else {
+                    //tokenLocation.setLocation(RedirectEnum.RUN);
+                }
+            }
+            body = new ResBody();
+            body.setSuccess(true);
+            body.setData(JSON.toJSONString(tokenLocation));
+        }
+        return body;
+    }
+
+    @Override
+    public ResBody runHtml(HttpServletRequest request) {
+        return null;
     }
 
     @Override

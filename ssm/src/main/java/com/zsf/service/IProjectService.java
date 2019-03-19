@@ -2,10 +2,9 @@ package com.zsf.service;
 
 import com.zsf.domain.GroupedElement;
 import com.zsf.domain.ProjectDto;
-import com.zsf.domain.ProjectInfo;
 import com.zsf.domain.ResBody;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 public interface IProjectService {
     ResBody addProjectToCollection(ProjectDto projectDto);
@@ -15,4 +14,8 @@ public interface IProjectService {
     ResBody saveGroupedElement(GroupedElement group);
 
     ResBody deleteSvg(ProjectDto projectDto);
+
+    ResBody configHtml(Integer nep, HttpServletRequest request);
+
+    ResBody runHtml(HttpServletRequest request);
 }

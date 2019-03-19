@@ -48,7 +48,7 @@ public class UserController {
         return userService.login(user, response);
     }
 
-    @RequestMapping("/roleManage")
+    @RequestMapping(value = "/roleManage", method = RequestMethod.POST)
     public ResBody roleManage(@RequestBody UserSvgsDto userSvgsDto) {
         return userService.roleManage(userSvgsDto);
     }

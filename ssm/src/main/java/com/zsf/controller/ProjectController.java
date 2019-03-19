@@ -100,4 +100,29 @@ public class ProjectController {
         return projectService.deleteSvg(projectDto);
     }
 
+    /**
+     * 返回config
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/runHtml", method = RequestMethod.POST)
+    public @ResponseBody ResBody runHtml(HttpServletRequest request,
+                                         HttpServletResponse response) {
+        return projectService.runHtml(request);
+    }
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/configChose", method = RequestMethod.POST)
+    public @ResponseBody ResBody configChose(@RequestBody SvgInfo nep, HttpServletRequest request,
+                                            HttpServletResponse response) {
+            return projectService.configHtml(nep.getId(), request);
+
+    }
+
 }

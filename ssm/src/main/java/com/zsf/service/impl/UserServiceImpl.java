@@ -87,8 +87,11 @@ public class UserServiceImpl implements IUserService {
             // token设置
             String token = setToken(response, userInfo);
             TokenLocation tokenLocation = new TokenLocation();
-            tokenLocation.setLocation(RedirectEnum.RUN);
+            tokenLocation.setLocation(RedirectEnum.MANAGER);
             tokenLocation.setToken(token);
+            if (1 == userInfo.getRole()) {
+                tokenLocation.setRole(true);
+            }
             logger.info("【" + Thread.currentThread().getName() +
                     "】 用户：" + userInfo.getName() + " 登陆成功！");
             body.setSuccess(true);
@@ -102,7 +105,8 @@ public class UserServiceImpl implements IUserService {
         UserInfo userInfo = userInfoDao.selectById(userSvgsDto.getAuthId());
         if (userInfo.getRole() == 3) {
 
-            List<Integer> svgs = userSvgsDao.selectSvgsByUserId(userInfo.getId());
+            List<Integer> svgs = userSvgsDao
+                    .selectSvgsByUserId(userInfo.getId());
             UserSvgs userSvgs = new UserSvgs();
             userSvgs.setUserId(userInfo.getId());
             for(Integer id : userSvgsDto.getSvgIds()) {

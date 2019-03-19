@@ -6,6 +6,16 @@ public class TokenLocation {
 
     private String location;
 
+    private Boolean role = false;
+
+    public Boolean getRole() {
+        return role;
+    }
+
+    public void setRole(Boolean role) {
+        this.role = role;
+    }
+
     public void setToken(String token) {
         this.token = token;
     }
