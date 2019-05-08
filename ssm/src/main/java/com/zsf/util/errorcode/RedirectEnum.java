@@ -2,7 +2,7 @@ package com.zsf.util.errorcode;
 
 public class RedirectEnum {
 
-    public final static String HOST = "http://localhost";
+    public final static String HOST = "http://172.17.161.136";
 
     public static final String LOGIN = "./login.html";
 

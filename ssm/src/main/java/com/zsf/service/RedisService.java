@@ -16,4 +16,6 @@ public interface RedisService {
     void setExpired(String key, String value, long time, TimeUnit unit);
 
     String getValue(String token);
+
+    void delete(UserInfo userInfo);
 }

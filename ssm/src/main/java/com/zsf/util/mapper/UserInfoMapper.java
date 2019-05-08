@@ -24,4 +24,6 @@ public interface UserInfoMapper {
     void updateByName(UserInfo userInfo);
 
     List<UserInfo> selectByChecked(int i);
+
+    List<UserInfo> queryAllByRole(Integer role);
 }

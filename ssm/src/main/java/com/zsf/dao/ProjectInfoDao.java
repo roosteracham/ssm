@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class ProjectInfoDao {
@@ -40,5 +41,9 @@ public class ProjectInfoDao {
 
     public ProjectInfo selectByProjectName(String name) {
         return projectInfoMapper.selectByProjectName(name);
+    }
+
+    public List<ProjectInfo> selectByProjectId(Set<String> projectIds) {
+        return projectInfoMapper.selectByProjectId(projectIds);
     }
 }

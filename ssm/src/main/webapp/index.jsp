@@ -2,11 +2,17 @@
 <html>
 <head>
     <title>1</title>
-    <script src="./static/js/config.js" ></script>
+
+    <script src="assets/sbadmin/jquery/dist/jquery.js" ></script>
 </head>
 <body>
 <h2 id="myDiv">Hello World!</h2>
 
-<script src="./static/js/config.js" ></script>
+<script>
+    $('#myDiv').on('click',function () {
+        location = 'http://localhost:8888/zutai/dev/c1/a?id=16';
+    })
+</script>
+
 </body>
 </html>

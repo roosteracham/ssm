@@ -45,5 +45,9 @@ public class SvgInfoDao {
     public void deleteSvg(SvgInfo svgInfo) {
         svgInfoMapper.deleteSvg(svgInfo);
     }
+
+    public SvgInfo selectByPSId(SvgInfo svgInfo) {
+        return svgInfoMapper.selectByPSId(svgInfo);
+    }
 }
 

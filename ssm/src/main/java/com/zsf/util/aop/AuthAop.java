@@ -29,7 +29,6 @@ public class AuthAop {
     @Autowired
     private RedisService redisService;
 
-
     @Pointcut("execution(public * com.zsf.controller.ProjectController.* (..))")
     private void projectAuth() {
 
@@ -56,9 +55,9 @@ public class AuthAop {
                     HttpServletResponse response = (HttpServletResponse) args[2];
                     response.setHeader("Content-Type",
                             "application/json; charset=utf-8");
-                    response.getWriter().append(JSON.toJSONString(resBody));
                     // 重新设置身份验证有效时间
                     redisService.setExpired(token, value, 60, TimeUnit.MINUTES);
+                    response.getWriter().append(JSON.toJSONString(resBody));
 
                     failed = false;
                 }catch (Throwable e) {

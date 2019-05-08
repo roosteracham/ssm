@@ -44,4 +44,11 @@ public class UserInfoDao {
     public List<UserInfo> selectByChecked(int i) {
         return userInfoMapper.selectByChecked(i);
     }
+
+    public List<UserInfo> queryAllByRole(UserInfo loginUser) {
+        return userInfoMapper.queryAllByRole(loginUser.getRole());
+    }
+    public int updatePassword(UserInfo userInfo) {
+        return userInfoMapper.updateByPrimaryKeySelective(userInfo);
+    }
 }

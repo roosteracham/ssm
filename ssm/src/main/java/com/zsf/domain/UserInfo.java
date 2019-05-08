@@ -17,6 +17,8 @@ public class UserInfo {
 
     private Integer checked;
 
+    private Integer roleId;
+
     public Integer getId() {
         return id;
     }
@@ -71,5 +73,13 @@ public class UserInfo {
 
     public void setChecked(Integer checked) {
         this.checked = checked;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 }

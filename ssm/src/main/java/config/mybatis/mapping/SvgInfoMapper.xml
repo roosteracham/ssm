@@ -15,6 +15,13 @@
     <include refid="Base_Column_List" />
     from svg_info
   </select>
+  <select id="selectByPSId" parameterType="com.zsf.domain.SvgInfo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from svg_info
+    where project_id = #{projectId,jdbcType=INTEGER}
+    and svg_id = #{svgId}
+  </select>
   <select id="selectByProjectId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
@@ -33,6 +40,11 @@
     from svg_info
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <delete id="deleteByPSId" parameterType="com.zsf.domain.SvgInfo">
+    delete from svg_info
+    where project_id = #{projectId,jdbcType=INTEGER}
+    and svg_id = #{svgId, jdbcType=INTEGER}
+  </delete>
   <delete id="deleteSvg" parameterType="com.zsf.domain.SvgInfo">
     delete from svg_info
     where project_id = #{projectId,jdbcType=INTEGER}

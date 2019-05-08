@@ -75,7 +75,8 @@ public class ProjectController {
     @RequestMapping(value = "/getProjectsCollection", method = RequestMethod.POST)
     public @ResponseBody ResBody getProjectsCollection(String id,
                                                        HttpServletRequest request, HttpServletResponse response) {
-        return projectService.getProjectsCollection();
+        //return projectService.getProjectsCollection();
+        return projectService.getProjects(request);
     }
 
     /**

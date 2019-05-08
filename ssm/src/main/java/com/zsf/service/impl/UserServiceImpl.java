@@ -11,31 +11,21 @@ import com.zsf.util.encode.BASE64;
 import com.zsf.util.errorcode.ErrorCodeEnum;
 import com.zsf.util.errorcode.MailServerEnum;
 import com.zsf.util.errorcode.RedirectEnum;
+import com.zsf.util.mapper.MenuMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.net.util.Base64;
-import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 import sun.misc.BASE64Encoder;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +96,7 @@ public class UserServiceImpl implements IUserService {
         if (userInfo.getRole() == 3) {
 
             List<Integer> svgs = userSvgsDao
-                    .selectSvgsByUserId(userInfo.getId());
+                    .selectSvgsById(userInfo.getId());
             UserSvgs userSvgs = new UserSvgs();
             userSvgs.setUserId(userInfo.getId());
             for(Integer id : userSvgsDto.getSvgIds()) {
@@ -121,6 +111,60 @@ public class UserServiceImpl implements IUserService {
         body.setData("");
         body.setSuccess(true);
         return body;
+    }
+
+    @Override
+    public UserInfo selectByName(UserInfo userInfo) {
+        return userInfoDao.selectByName(userInfo);
+    }
+
+    @Override
+    public int updatePassword(String userId, String password) {
+        if(StringUtils.isBlank(password)){
+            password = "123123";
+        }
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(Integer.parseInt(userId));
+        userInfo.setAuth(password);
+        return userInfoDao.updatePassword(userInfo);
+    }
+
+    @Override
+    public boolean checkUsername(String username) {
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName(username);
+        UserInfo loginUser = userInfoDao.selectByName(userInfo);
+        if (null == loginUser) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public List<UserInfo> queryAllByRole(UserInfo loginUser) {
+        return userInfoDao.queryAllByRole(loginUser);
+    }
+
+    @Override
+    public String userManager(UserInfo user, HttpServletRequest request, HttpSession session) {
+
+        String res = null;
+
+        String token = request.getHeader("Authorization").split(" ")[1];
+        int id = Integer.parseInt(token);
+        UserInfo userInfo = userInfoDao.selectById(id);
+        if (null != userInfo && 1 == userInfo.getRole()) {
+
+            session.setAttribute("userInfo", userInfo);
+            res = "admin/home/index";
+        } else {
+            res = "user no exists";
+        }
+
+        return res;
     }
 
     private String setToken(HttpServletResponse response, UserInfo userInfo) {

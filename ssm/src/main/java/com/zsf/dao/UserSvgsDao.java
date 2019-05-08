@@ -13,8 +13,8 @@ public class UserSvgsDao {
     @Autowired
     private UserSvgsMapper userSvgsMapper;
 
-    public List<Integer> selectSvgsByUserId(Integer id) {
-        return userSvgsMapper.selectSvgsByUserId(id);
+    public List<Integer> selectSvgsById(Integer id) {
+        return userSvgsMapper.selectSvgsById(id);
     }
 
     public void insert(UserSvgs userSvgs) {

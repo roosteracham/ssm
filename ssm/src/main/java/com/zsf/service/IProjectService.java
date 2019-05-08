@@ -18,4 +18,6 @@ public interface IProjectService {
     ResBody configHtml(Integer nep, HttpServletRequest request);
 
     ResBody runHtml(HttpServletRequest request);
+
+    ResBody getProjects(HttpServletRequest request);
 }

@@ -32,6 +32,10 @@
     from project_info
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <delete id="deleteByPId" parameterType="java.lang.Integer">
+    delete from project_info
+    where project_id = #{projectId,jdbcType=INTEGER}
+  </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from project_info
     where id = #{id,jdbcType=INTEGER}

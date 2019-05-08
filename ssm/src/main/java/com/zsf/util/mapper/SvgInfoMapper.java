@@ -1,5 +1,6 @@
 package com.zsf.util.mapper;
 
+import com.zsf.domain.RoleProjectSvg;
 import com.zsf.domain.SvgInfo;
 
 import java.util.List;
@@ -24,4 +25,8 @@ public interface SvgInfoMapper {
     SvgInfo selectByProjectId(Integer projectId);
 
     void deleteSvg(SvgInfo svgInfo);
+
+    int deleteByPSId(SvgInfo svgInfo);
+
+    SvgInfo selectByPSId(SvgInfo svgInfo);
 }

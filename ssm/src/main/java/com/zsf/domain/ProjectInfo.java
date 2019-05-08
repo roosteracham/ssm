@@ -1,6 +1,8 @@
 package com.zsf.domain;
 
-public class ProjectInfo {
+import java.util.Objects;
+
+public class ProjectInfo implements Comparable{
     private Integer id;
 
     private String projectName;
@@ -39,5 +41,29 @@ public class ProjectInfo {
 
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProjectInfo that = (ProjectInfo) o;
+        return Objects.equals(projectName, that.projectName) &&
+                Objects.equals(projectId, that.projectId);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(projectName, projectId);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (this.hashCode() > o.hashCode())
+            return 1;
+        else if (this.hashCode() < o.hashCode())
+            return -1;
+        return 0;
     }
 }
