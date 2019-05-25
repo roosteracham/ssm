@@ -5,9 +5,7 @@ import com.google.gson.GsonBuilder;
 
 /**
  * 返回数据的json格式
- * 
- * @author 程高伟
- * @date 2016年11月14日 上午10:37:51
+ *
  */
 public class BaseReturn {
 	private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();

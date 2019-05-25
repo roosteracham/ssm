@@ -18,9 +18,7 @@ import java.util.List;
 
 /**
  * 用来更新session中的信息
- * 
- * @author 程高伟
- * @date 2016年11月14日 下午1:56:26
+ *
  */
 @Service
 public class SessionServiceImpl implements ISessionService {

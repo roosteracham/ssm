@@ -2,8 +2,6 @@ package com.zsf.util.errorcode;
 
 /**
  * 错误返回码
- * @author 程高伟
- * @date 2016年11月11日 下午10:36:21
  */
 public enum ErrorCode {
 	SUCCESS("0","success"),

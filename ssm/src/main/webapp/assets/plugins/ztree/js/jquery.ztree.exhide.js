@@ -1,14 +1,5 @@
 /*
- * JQuery zTree exHideNodes v3.5.26
- * http://zTree.me/
  *
- * Copyright (c) 2010 Hunter.z
- *
- * Licensed same as jquery - MIT License
- * http://www.opensource.org/licenses/mit-license.php
- *
- * email: hunter.z@263.net
- * Date: 2016-11-03
  */
 (function($){
 	//default init node of exLib

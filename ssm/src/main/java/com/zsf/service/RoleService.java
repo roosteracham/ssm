@@ -6,11 +6,6 @@ import com.zsf.domain.UserInfo;
 
 import java.util.List;
 
-/**
- * @author 程高伟
- *
- * @date 2016年6月16日 下午9:27:47
- */
 public interface RoleService {
 
 	/**

@@ -2,9 +2,7 @@ package com.zsf.util.encode;
 
 /**
  * 系统参数和session参数
- * 
- * @author 程高伟
- * @date 2016年11月14日 上午10:43:44
+ *
  */
 public interface Param {
 
